@@ -7,87 +7,107 @@
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body {
-            background-color: #020208;
-            color: #e0e6ed;
+            background-color: #010204;
+            color: #e2e8f0;
             overflow-x: hidden;
             position: relative;
             min-height: 100vh;
         }
+        
+        /* Céu Estrelado Realista com Camadas de Profundidade */
         .stars {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none;
-            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+            background: radial-gradient(circle at 50% 20%, #0b1026 0%, #040612 50%, #010204 100%);
             z-index: -1;
         }
         .star {
             position: absolute;
             background: #ffffff;
             border-radius: 50%;
-            animation: twinkle 2s infinite ease-in-out;
+            animation: twinkle var(--duration) infinite ease-in-out;
+            opacity: var(--opacity);
         }
         @keyframes twinkle {
             0%, 100% { opacity: 0.2; transform: scale(0.8); }
-            50% { opacity: 1; transform: scale(1.2); }
+            50% { opacity: 1; transform: scale(1.3); }
         }
+
         .container {
-            max-width: 480px;
+            max-width: 900px; /* Expandido para acomodar os cards lado a lado */
             margin: 0 auto;
             padding: 16px;
         }
         header {
             text-align: center;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(0, 242, 254, 0.2);
-            margin-bottom: 12px;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(0, 242, 254, 0.25);
+            margin-bottom: 16px;
         }
         header h1 {
-            font-size: 1.3rem;
+            font-size: 1.5rem;
             color: #00f2fe;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+            letter-spacing: 3px;
+            text-shadow: 0 0 12px rgba(0, 242, 254, 0.6);
         }
         header p {
-            font-size: 0.75rem;
-            color: #a0aec0;
+            font-size: 0.8rem;
+            color: #94a3b8;
             margin-top: 4px;
         }
 
         .live-ticker {
             background: rgba(0, 242, 254, 0.08);
-            border: 1px solid rgba(0, 242, 254, 0.2);
+            border: 1px solid rgba(0, 242, 254, 0.3);
             border-radius: 8px;
-            padding: 6px 10px;
-            font-size: 0.7rem;
+            padding: 8px 12px;
+            font-size: 0.75rem;
             color: #38bdf8;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
+            backdrop-filter: blur(4px);
         }
         .pulse-dot {
             width: 8px; height: 8px; background: #10b981; border-radius: 50%;
-            display: inline-block; box-shadow: 0 0 8px #10b981;
+            display: inline-block; box-shadow: 0 0 10px #10b981;
             animation: pulse 1.5s infinite;
         }
         @keyframes pulse {
             0% { transform: scale(0.9); opacity: 0.7; }
-            50% { transform: scale(1.2); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 1; }
             100% { transform: scale(0.9); opacity: 0.7; }
+        }
+
+        /* Grade Estilo Painel de Nave (Cards Lado a Lado) */
+        .grid-dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 14px;
         }
         
         .card {
-            background: rgba(15, 23, 42, 0.75);
-            border: 1px solid rgba(0, 242, 254, 0.3);
+            background: rgba(11, 19, 43, 0.75);
+            border: 1px solid rgba(0, 242, 254, 0.25);
             border-radius: 12px;
             padding: 14px;
-            margin-bottom: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
-            backdrop-filter: blur(6px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
-        .card:active { transform: scale(0.98); border-color: #00f2fe; }
+        .card:hover {
+            border-color: #00f2fe;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
+            transform: translateY(-2px);
+        }
+        .card:active { transform: scale(0.98); }
+        
         .card h3 {
             font-size: 0.95rem;
             color: #4facfe;
@@ -113,13 +133,14 @@
 
         .score-box {
             display: flex; align-items: center; justify-content: space-between;
-            background: rgba(2, 6, 23, 0.6); border: 1px solid rgba(79, 172, 254, 0.2);
-            padding: 10px; border-radius: 8px; margin-top: 8px;
+            background: rgba(2, 6, 23, 0.7); border: 1px solid rgba(79, 172, 254, 0.2);
+            padding: 8px 10px; border-radius: 8px; margin-top: 6px;
         }
-        .score-number { font-size: 1.6rem; font-weight: bold; color: #10b981; }
-        .score-info { font-size: 0.75rem; color: #94a3b8; text-align: right; }
+        .score-number { font-size: 1.5rem; font-weight: bold; color: #10b981; }
+        .score-info { font-size: 0.72rem; color: #94a3b8; text-align: right; }
+        
         .source-footer {
-            font-size: 0.7rem; color: #64748b; margin-top: 8px;
+            font-size: 0.68rem; color: #64748b; margin-top: 8px;
             border-top: 1px solid rgba(255,255,255,0.05); padding-top: 6px;
             display: flex; justify-content: space-between;
         }
@@ -128,22 +149,23 @@
             background: #000;
             border: 1px solid rgba(0, 242, 254, 0.4);
             border-radius: 8px;
-            padding: 10px;
+            padding: 8px;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 0.72rem;
+            font-size: 0.7rem;
             color: #38bdf8;
-            margin-top: 8px;
+            margin-top: 6px;
             line-height: 1.3;
         }
 
+        /* Janela Modal */
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(2, 2, 8, 0.85); backdrop-filter: blur(8px);
+            background: rgba(1, 2, 6, 0.88); backdrop-filter: blur(10px);
             z-index: 100; justify-content: center; align-items: center; padding: 20px;
         }
         .modal-content {
-            background: #0b1329; border: 1px solid #00f2fe; border-radius: 14px;
-            padding: 20px; width: 100%; max-width: 420px; box-shadow: 0 0 25px rgba(0, 242, 254, 0.4);
+            background: #091026; border: 1px solid #00f2fe; border-radius: 14px;
+            padding: 20px; width: 100%; max-width: 440px; box-shadow: 0 0 30px rgba(0, 242, 254, 0.4);
         }
         .modal-header {
             display: flex; justify-content: space-between; align-items: center;
@@ -153,14 +175,14 @@
         .close-btn { background: none; border: none; color: #ef4444; font-size: 1.2rem; cursor: pointer; font-weight: bold; }
         .modal-body { font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; }
 
-        .footer-action { text-align: center; margin-top: 15px; padding-bottom: 25px; }
+        .footer-action { text-align: center; margin-top: 20px; padding-bottom: 30px; grid-column: 1 / -1; }
         .btn-telegram {
             display: inline-block; background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-            color: #090a0f; padding: 10px 20px; border-radius: 20px;
-            text-decoration: none; font-weight: bold; font-size: 0.85rem;
-            box-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
+            color: #010204; padding: 12px 24px; border-radius: 25px;
+            text-decoration: none; font-weight: bold; font-size: 0.9rem;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
         }
-        .tap-hint { font-size: 0.65rem; color: #38bdf8; text-align: right; margin-top: 4px; font-style: italic; }
+        .tap-hint { font-size: 0.65rem; color: #38bdf8; text-align: right; margin-top: 6px; font-style: italic; }
     </style>
 </head>
 <body>
@@ -179,146 +201,151 @@
             <span>LATÊNCIA: 38ms</span>
         </div>
 
-        <!-- CARD 1: STATUS DA OPERAÇÃO -->
-        <div class="card" onclick="abrirDetalhes('status')">
-            <h3>Status da Operação <span class="badge nominal">🟢 NOMINAL</span></h3>
-            <div class="score-box">
-                <div>
-                    <div class="score-number">23 / 100</div>
-                    <div style="font-size: 0.7rem; color: #38bdf8;">LOW THREAT LEVEL</div>
+        <!-- GRID DE CARDS (LADO A LADO) -->
+        <div class="grid-dashboard">
+
+            <!-- CARD 1: STATUS DA OPERAÇÃO -->
+            <div class="card" onclick="abrirDetalhes('status')">
+                <h3>Status da Operação <span class="badge nominal">🟢 NOMINAL</span></h3>
+                <div class="score-box">
+                    <div>
+                        <div class="score-number">23 / 100</div>
+                        <div style="font-size: 0.68rem; color: #38bdf8;">LOW THREAT</div>
+                    </div>
+                    <div class="score-info">
+                        Eventos (24h): <b>02</b><br>
+                        Objetos LEO: <b>1,420</b><br>
+                        Conjunções: <b>0</b>
+                    </div>
                 </div>
-                <div class="score-info">
-                    Eventos (24h): <b>02</b><br>
-                    Objetos LEO: <b>1,420</b><br>
-                    Conjunções: <b>0</b>
+                <div class="tap-hint">🔍 Toque para relatório tático</div>
+            </div>
+
+            <!-- CARD 2: AI BRIEFING -->
+            <div class="card" onclick="abrirDetalhes('ai_briefing')">
+                <h3>🧠 AI Briefing <span class="badge ai">ATIVO</span></h3>
+                <p>Resumo executivo do Analista SOC Sênior sobre o comportamento do tráfego orbital e solar atual.</p>
+                <div class="tap-hint">🔍 Toque para ler parecer da IA</div>
+            </div>
+
+            <!-- CARD 3: SPACE WEATHER -->
+            <div class="card" onclick="abrirDetalhes('weather')">
+                <h3>☀️ Space Weather <span class="badge nominal">ONLINE</span></h3>
+                <p><strong>Atividade Solar:</strong> Baixa | <strong>Kp:</strong> 2.3</p>
+                <p style="margin-top: 4px; font-size: 0.78rem; color: #38bdf8;">⚡ Rede Elétrica & GPS: <b>Seguros.</b></p>
+                <div class="source-footer">
+                    <span>NOAA / SWPC</span>
+                    <span id="swTimestamp">--:--</span>
                 </div>
+                <div class="tap-hint">🔍 Toque para detalhes solares</div>
             </div>
-            <div class="tap-hint">🔍 Toque para ver relatório tático</div>
-        </div>
 
-        <!-- CARD NOVO: ASTROGUARD AI BRIEFING -->
-        <div class="card" onclick="abrirDetalhes('ai_briefing')">
-            <h3>🧠 Space Threat AI Briefing <span class="badge ai">ATIVO</span></h3>
-            <p>Resumo executivo do Analista SOC Sênior sobre o comportamento atual do tráfego orbital e solar.</p>
-            <div class="tap-hint">🔍 Toque para ler parecer executivo da IA</div>
-        </div>
-
-        <!-- CARD 2: SPACE WEATHER -->
-        <div class="card" onclick="abrirDetalhes('weather')">
-            <h3>☀️ Space Weather & Impactos <span class="badge nominal">ONLINE</span></h3>
-            <p><strong>Atividade Solar:</strong> Baixa | <strong>Kp:</strong> 2.3 (Calmo)</p>
-            <p style="margin-top: 4px; font-size: 0.78rem; color: #38bdf8;">⚡ Rede Elétrica & 🛰️ Sinais de GPS: <b>Sem risco de indução.</b></p>
-            <div class="source-footer">
-                <span>Fonte: NOAA / SWPC</span>
-                <span id="swTimestamp">Atualizado: --:--</span>
+            <!-- CARD 4: RADIATION MONITOR -->
+            <div class="card" onclick="abrirDetalhes('radiation')">
+                <h3>☢️ Radiação Orbital <span class="badge nominal">SEGURO</span></h3>
+                <p><strong>Cinturão de Van Allen:</strong> Fluxo de elétrons em níveis estáveis para satélites LEO.</p>
+                <div class="tap-hint">🔍 Toque para telemetria de radiação</div>
             </div>
-            <div class="tap-hint">🔍 Toque para detalhes de clima espacial</div>
-        </div>
 
-        <!-- CARD NOVO: MONITOR DE CINTURÃO DE RADIAÇÃO -->
-        <div class="card" onclick="abrirDetalhes('radiation')">
-            <h3>☢️ Radiation Belt Monitor <span class="badge nominal">SEGURO</span></h3>
-            <p><strong>Cinturão de Van Allen:</strong> Fluxo de elétrons de alta energia em níveis estáveis para satélites LEO.</p>
-            <div class="tap-hint">🔍 Toque para ver telemetria de radiação</div>
-        </div>
-
-        <!-- CARD 3: CIBERSEGURANÇA DA ESTAÇÃO TERRENA -->
-        <div class="card" onclick="abrirDetalhes('ground')">
-            <h3>🔒 Cibersegurança de Solo <span class="badge nominal">BLINDADO</span></h3>
-            <p><strong>Criptografia C2:</strong> AES-256 Ativa (Chaves Rotativas)</p>
-            <p style="margin-top: 4px;">Varredura de Porta (Port Scan): <b>Zero ameaças nas antenas.</b></p>
-            <div class="tap-hint">🔍 Toque para auditoria de firewalls</div>
-        </div>
-
-        <!-- CARD 4: FASE LUNAR & TERRA -->
-        <div class="card" onclick="abrirDetalhes('lua')">
-            <h3>🌕 Fase Lunar & Condição da Terra</h3>
-            <p><strong>Fase Atual:</strong> Lua Crescente Iluminada (68%)</p>
-            <p style="margin-top: 4px;">Distância Média Terra-Lua: 384.400 km.</p>
-            <div class="tap-hint">🔍 Toque para ver dados astronômicos</div>
-        </div>
-
-        <!-- CARD 5: PLANETAS VISÍVEIS -->
-        <div class="card" onclick="abrirDetalhes('planetas')">
-            <h3>🔭 Planetas Visíveis Hoje (Céu do Brasil)</h3>
-            <ul>
-                <li>✨ <strong>Vênus:</strong> Visível a Oeste no pôr do sol.</li>
-                <li>🪐 <strong>Júpiter:</strong> Emersão a Leste na madrugada.</li>
-            </ul>
-            <div class="tap-hint">🔍 Toque para ver mapa de visibilidade</div>
-        </div>
-
-        <!-- CARD 6: LIXO ESPACIAL & SATÉLITES -->
-        <div class="card" onclick="abrirDetalhes('lixo')">
-            <h3>🛰️ Lixo Espacial & Satélites <span class="badge warning">ATENÇÃO</span></h3>
-            <p>Monitoramento de reentrada sobre o espaço aéreo da América do Sul e Brasil.</p>
-            <div class="tap-hint">🔍 Toque para ver setores monitorados</div>
-        </div>
-
-        <!-- CARD 7: TERMINAL ASTROGUARD -->
-        <div class="card" onclick="abrirDetalhes('terminal')">
-            <h3>💻 Terminal AstroGuard (Logs ao Vivo)</h3>
-            <div class="terminal-box">
-                [20:38:00] SYSTEM ........ ONLINE<br>
-                [20:38:05] RADUATION .... NOMINAL<br>
-                [20:38:10] C2 FIREWALL .. SECURE
+            <!-- CARD 5: CIBERSEGURANÇA DE SOLO -->
+            <div class="card" onclick="abrirDetalhes('ground')">
+                <h3>🔒 Cibersegurança <span class="badge nominal">BLINDADO</span></h3>
+                <p><strong>Criptografia C2:</strong> AES-256 Ativa (Chaves Rotativas). Zero intrusões nas antenas.</p>
+                <div class="tap-hint">🔍 Toque para auditoria de firewalls</div>
             </div>
-            <div class="tap-hint">🔍 Toque para abrir console completo</div>
-        </div>
 
-        <!-- BOTÃO TELEGRAM -->
-        <div class="footer-action">
-            <a href="https://t.me/SpaceSOC_bot" target="_blank" class="btn-telegram">🚀 Acessar Bot de Alertas no Telegram</a>
+            <!-- CARD 6: FASE LUNAR -->
+            <div class="card" onclick="abrirDetalhes('lua')">
+                <h3>🌕 Fase Lunar & Terra</h3>
+                <p><strong>Fase Atual:</strong> Lua Crescente Iluminada (68%). Distância: 384.400 km.</p>
+                <div class="tap-hint">🔍 Toque para dados astronômicos</div>
+            </div>
+
+            <!-- CARD 7: PLANETAS VISÍVEIS -->
+            <div class="card" onclick="abrirDetalhes('planetas')">
+                <h3>🔭 Planetas Hoje</h3>
+                <ul>
+                    <li>✨ <strong>Vênus:</strong> Oeste (Pôr do sol).</li>
+                    <li>🪐 <strong>Júpiter:</strong> Leste (Madrugada).</li>
+                </ul>
+                <div class="tap-hint">🔍 Toque para mapa de visibilidade</div>
+            </div>
+
+            <!-- CARD 8: LIXO ESPACIAL -->
+            <div class="card" onclick="abrirDetalhes('lixo')">
+                <h3>🛰️ Lixo Espacial <span class="badge warning">ATENÇÃO</span></h3>
+                <p>Monitoramento de reentrada sobre o espaço aéreo do Brasil (Setor ATL-BR).</p>
+                <div class="tap-hint">🔍 Toque para ver setores</div>
+            </div>
+
+            <!-- CARD 9: TERMINAL -->
+            <div class="card" onclick="abrirDetalhes('terminal')">
+                <h3>💻 Terminal Ao Vivo</h3>
+                <div class="terminal-box">
+                    [20:44:00] SYSTEM .... ONLINE<br>
+                    [20:44:05] RADUATION . NOMINAL<br>
+                    [20:44:10] FIREWALL .. SECURE
+                </div>
+                <div class="tap-hint">🔍 Toque para console completo</div>
+            </div>
+
+            <!-- BOTÃO TELEGRAM -->
+            <div class="footer-action">
+                <a href="https://t.me/SpaceSOC_bot" target="_blank" class="btn-telegram">🚀 Acessar Bot de Alertas no Telegram</a>
+            </div>
+
         </div>
     </div>
 
-    <!-- JANELA MODAL DE DETALHES INTERATIVOS -->
+    <!-- JANELA MODAL -->
     <div class="modal" id="modalDetalhes">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 id="modalTitulo">Detalhes do Módulo</h2>
+                <h2 id="modalTitulo">Detalhes</h2>
                 <button class="close-btn" onclick="fecharDetalhes()">✕</button>
             </div>
-            <div class="modal-body" id="modalTexto">
-                Carregando telemetria...
-            </div>
+            <div class="modal-body" id="modalTexto">Carregando...</div>
         </div>
     </div>
 
     <script>
+        // Céu Estrelado Realista com 3 camadas de tamanho e brilho
         const container = document.getElementById('starsContainer');
-        for (let i = 0; i < 60; i++) {
+        for (let i = 0; i < 90; i++) {
             const star = document.createElement('div');
             star.className = 'star';
-            const size = Math.random() * 2 + 'px';
-            star.style.width = size; star.style.height = size;
+            const size = (Math.random() * 2.2 + 0.8) + 'px';
+            star.style.width = size;
+            star.style.height = size;
             star.style.top = Math.random() * 100 + '%';
             star.style.left = Math.random() * 100 + '%';
-            star.style.animationDuration = (Math.random() * 3 + 1) + 's';
+            star.style.setProperty('--duration', (Math.random() * 3 + 1.5) + 's');
+            star.style.setProperty('--opacity', Math.random() * 0.7 + 0.3);
             container.appendChild(star);
         }
-        document.getElementById('swTimestamp').innerText = "Atualizado: " + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+
+        document.getElementById('swTimestamp').innerText = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
 
         const dadosModulos = {
             status: {
                 titulo: "🛡️ Relatório Tático de Operações",
-                texto: "<b>Nível de Ameaça Global:</b> 23/100 (Baixo Risco).<br><br>• <b>Enlaces de Telemetria:</b> 100% íntegros em Banda X e Ka.<br>• <b>Conjunções Críticas (Risco de Colisão):</b> 0 alertas nas últimas 24h.<br>• <b>Status da Frota LEO:</b> Operando dentro dos parâmetros nominais."
+                texto: "<b>Nível de Ameaça Global:</b> 23/100 (Baixo Risco).<br><br>• <b>Enlaces de Telemetria:</b> 100% íntegros em Banda X e Ka.<br>• <b>Conjunções Críticas:</b> 0 alertas nas últimas 24h.<br>• <b>Status da Frota LEO:</b> Operando dentro dos parâmetros nominais."
             },
             ai_briefing: {
                 titulo: "🧠 AstroGuard AI Executive Briefing",
-                texto: "<b>Parecer Autônomo da Inteligência SOC:</b><br><br><i>\"O ecossistema orbital e de solo encontra-se em estabilidade absoluta. Os flancos solares não apresentam ejeções de massa coronal diretas, e as constelações LEO mantêm manobras autônomas de desvio inativas por ausência de detritos em rota de colisão iminente. Perímetro seguro para operações terrestres de comando e controle.\"</i><br><br>• <b>Confiança da Análise:</b> 94%<br>• <b>Fonte:</b> Agregador Multi-Feed AstroGuard"
+                texto: "<b>Parecer Autônomo da Inteligência SOC:</b><br><br><i>\"O ecossistema orbital e de solo encontra-se em estabilidade absoluta. Os flancos solares não apresentam ejeções de massa coronal diretas, e as constelações LEO mantêm manobras autônomas de desvio inativas.\"</i><br><br>• <b>Confiança da Análise:</b> 94%"
             },
             weather: {
                 titulo: "☀️ Clima Espacial, Energia & GPS",
-                texto: "<b>Análise de Impacto Magnético:</b><br><br>• ⚡ <b>Redes de Energia Elétrica:</b> Sem correntes induzidas geomagneticamente (GIC).<br>• 🛰️ <b>Sinais de GPS / GNSS:</b> Precisão milimétrica preservada.<br>• <b>Índice Kp:</b> 2.3 (Estável)."
+                texto: "<b>Análise de Impacto Magnético:</b><br><br>• ⚡ <b>Redes de Energia:</b> Sem correntes induzidas geomagneticamente (GIC).<br>• 🛰️ <b>Sinais de GPS / GNSS:</b> Precisão milimétrica preservada.<br>• <b>Índice Kp:</b> 2.3 (Estável)."
             },
             radiation: {
                 titulo: "☢️ Monitor de Cinturão de Radiação (Van Allen)",
-                texto: "<b>Telemetria de Partículas Energéticas:</b><br><br>• 🔋 <b>Degradação de Painéis Solares:</b> Taxa mínima esperada.<br>• ⚡ <b>Fluxo de Elétrons Relativísticos:</b> Abaixo do limite de alerta de carga eletrostática em satélites.<br>• <b>Status:</b> Ambiente orbital seguro para eletrônicos sensíveis."
+                texto: "<b>Telemetria de Partículas:</b><br><br>• 🔋 <b>Painéis Solares:</b> Degradação mínima esperada.<br>• ⚡ <b>Elétrons Relativísticos:</b> Abaixo do limite de alerta.<br>• <b>Status:</b> Ambiente orbital seguro."
             },
             ground: {
-                titulo: "🔒 Auditoria de Cibersegurança de Solo",
-                texto: "<b>Proteção de Estações Terrenas (Antenas de Comando):</b><br><br>• 🛡️ <b>Firewall Perimétrico:</b> Ativo e bloqueando pacotes maliciosos externos.<br>• 🔑 <b>Criptografia de Uplink:</b> Chaves rotativas AES-256 sincronizadas.<br>• 🤖 <b>Intrusões:</b> Zero ocorrências de spoofing de sinal."
+                titulo: "🔒 Cibersegurança de Solo (Ground Station)",
+                texto: "<b>Proteção de Antenas de Comando:</b><br><br>• 🛡️ <b>Firewall Perimétrico:</b> Ativo e bloqueando pacotes maliciosos.<br>• 🔑 <b>Criptografia:</b> Chaves rotativas AES-256 sincronizadas.<br>• 🤖 <b>Intrusões:</b> Zero ocorrências de spoofing."
             },
             lua: {
                 titulo: "🌕 Astronomia: Sistema Terra-Lua",
@@ -334,19 +361,15 @@
             },
             terminal: {
                 titulo: "💻 Console de Logs do Sistema (Terminal)",
-                texto: "<b>Histórico de Processamento em Tempo Real:</b><br><br>[OK] Carregando subsistema AstroGuard v3.0<br>[OK] Sincronização CelesTrak & NOAA ativa<br>[OK] Módulo de radiação e conjunções online<br>[STATUS] Sistema operando sem falhas críticas."
+                texto: "<b>Histórico de Processamento:</b><br><br>[OK] Carregando subsistema AstroGuard v3.5<br>[OK] Sincronização CelesTrak & NOAA ativa<br>[OK] Módulo de radiação e conjunções online"
             }
         };
 
         function abrirDetalhes(modulo) {
             const modal = document.getElementById('modalDetalhes');
-            const titulo = document.getElementById('modalTitulo');
-            const texto = document.getElementById('modalTexto');
-            if (dadosModulos[modulo]) {
-                titulo.innerHTML = dadosModulos[modulo].titulo;
-                texto.innerHTML = dadosModulos[modulo].texto;
-                modal.style.display = 'flex';
-            }
+            document.getElementById('modalTitulo').innerHTML = dadosModulos[modulo].titulo;
+            document.getElementById('modalTexto').innerHTML = dadosModulos[modulo].texto;
+            modal.style.display = 'flex';
         }
 
         function fecharDetalhes() { document.getElementById('modalDetalhes').style.display = 'none'; }
