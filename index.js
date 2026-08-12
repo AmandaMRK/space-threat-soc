@@ -12,7 +12,7 @@ function logEvent(level, message) {
     const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
     console.log(`[${timestamp}] [${level.toUpperCase()}] ${message}`);
     auditLogs.unshift({
-        event_id: Math.random().toString(36.substring(2, 9)).toUpperCase(),
+        event_id: Math.random().toString(36).substring(2, 9).toUpperCase(),
         level,
         message,
         timestamp
@@ -71,7 +71,6 @@ bot.on('text', async (ctx) => {
             { parse_mode: 'Markdown' }
         );
     } catch (e) {
-        // Fallback caso a resposta quebre o markdown
         await ctx.reply(`🧠 *Resposta do Analista SOC (IA):*\n\n${resposta}`, { parse_mode: 'Markdown' });
     }
 });
