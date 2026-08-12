@@ -53,7 +53,6 @@
             margin-top: 4px;
         }
 
-        /* Barra de Live Ticker (Telemetria ao Vivo) */
         .live-ticker {
             background: rgba(0, 242, 254, 0.08);
             border: 1px solid rgba(0, 242, 254, 0.2);
@@ -77,7 +76,6 @@
             100% { transform: scale(0.9); opacity: 0.7; }
         }
         
-        /* Cards Interativos */
         .card {
             background: rgba(15, 23, 42, 0.75);
             border: 1px solid rgba(0, 242, 254, 0.3);
@@ -111,6 +109,7 @@
         }
         .badge.nominal { background: #10b981; color: #fff; }
         .badge.warning { background: #f59e0b; color: #fff; }
+        .badge.ai { background: #8b5cf6; color: #fff; }
 
         .score-box {
             display: flex; align-items: center; justify-content: space-between;
@@ -125,7 +124,6 @@
             display: flex; justify-content: space-between;
         }
 
-        /* Estilo Terminal Hacker / SOC */
         .terminal-box {
             background: #000;
             border: 1px solid rgba(0, 242, 254, 0.4);
@@ -138,7 +136,6 @@
             line-height: 1.3;
         }
 
-        /* Janela Modal */
         .modal {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(2, 2, 8, 0.85); backdrop-filter: blur(8px);
@@ -178,7 +175,7 @@
 
         <!-- LIVE TICKER DE TELEMETRIA -->
         <div class="live-ticker">
-            <span><span class="pulse-dot"></span> SINAL DE TELEMETRIA: CONECTADO</span>
+            <span><span class="pulse-dot"></span> TELEMETRIA: CONECTADA</span>
             <span>LATÊNCIA: 38ms</span>
         </div>
 
@@ -193,17 +190,24 @@
                 <div class="score-info">
                     Eventos (24h): <b>02</b><br>
                     Objetos LEO: <b>1,420</b><br>
-                    Reentradas: <b>0</b>
+                    Conjunções: <b>0</b>
                 </div>
             </div>
             <div class="tap-hint">🔍 Toque para ver relatório tático</div>
         </div>
 
-        <!-- CARD 2: SPACE WEATHER (COM FOCO EM ENERGIA & GPS) -->
+        <!-- CARD NOVO: ASTROGUARD AI BRIEFING -->
+        <div class="card" onclick="abrirDetalhes('ai_briefing')">
+            <h3>🧠 Space Threat AI Briefing <span class="badge ai">ATIVO</span></h3>
+            <p>Resumo executivo do Analista SOC Sênior sobre o comportamento atual do tráfego orbital e solar.</p>
+            <div class="tap-hint">🔍 Toque para ler parecer executivo da IA</div>
+        </div>
+
+        <!-- CARD 2: SPACE WEATHER -->
         <div class="card" onclick="abrirDetalhes('weather')">
             <h3>☀️ Space Weather & Impactos <span class="badge nominal">ONLINE</span></h3>
             <p><strong>Atividade Solar:</strong> Baixa | <strong>Kp:</strong> 2.3 (Calmo)</p>
-            <p style="margin-top: 4px; font-size: 0.78rem; color: #38bdf8;">⚡ Rede Elétrica & 🛰️ Sinais de GPS: <b>Sem risco de indução geomagnética.</b></p>
+            <p style="margin-top: 4px; font-size: 0.78rem; color: #38bdf8;">⚡ Rede Elétrica & 🛰️ Sinais de GPS: <b>Sem risco de indução.</b></p>
             <div class="source-footer">
                 <span>Fonte: NOAA / SWPC</span>
                 <span id="swTimestamp">Atualizado: --:--</span>
@@ -211,12 +215,19 @@
             <div class="tap-hint">🔍 Toque para detalhes de clima espacial</div>
         </div>
 
-        <!-- CARD 3: CIBERSEGURANÇA DA ESTAÇÃO TERRENA (GROUND STATION) -->
+        <!-- CARD NOVO: MONITOR DE CINTURÃO DE RADIAÇÃO -->
+        <div class="card" onclick="abrirDetalhes('radiation')">
+            <h3>☢️ Radiation Belt Monitor <span class="badge nominal">SEGURO</span></h3>
+            <p><strong>Cinturão de Van Allen:</strong> Fluxo de elétrons de alta energia em níveis estáveis para satélites LEO.</p>
+            <div class="tap-hint">🔍 Toque para ver telemetria de radiação</div>
+        </div>
+
+        <!-- CARD 3: CIBERSEGURANÇA DA ESTAÇÃO TERRENA -->
         <div class="card" onclick="abrirDetalhes('ground')">
-            <h3>🔒 Cibersegurança de Solo (Ground Station) <span class="badge nominal">BLINDADO</span></h3>
+            <h3>🔒 Cibersegurança de Solo <span class="badge nominal">BLINDADO</span></h3>
             <p><strong>Criptografia C2:</strong> AES-256 Ativa (Chaves Rotativas)</p>
-            <p style="margin-top: 4px;">Tentativas de Varredura de Porta (Port Scan): <b>Zero ameaças nas antenas primárias.</b></p>
-            <div class="tap-hint">🔍 Toque para auditoria de portas e firewalls</div>
+            <p style="margin-top: 4px;">Varredura de Porta (Port Scan): <b>Zero ameaças nas antenas.</b></p>
+            <div class="tap-hint">🔍 Toque para auditoria de firewalls</div>
         </div>
 
         <!-- CARD 4: FASE LUNAR & TERRA -->
@@ -248,9 +259,9 @@
         <div class="card" onclick="abrirDetalhes('terminal')">
             <h3>💻 Terminal AstroGuard (Logs ao Vivo)</h3>
             <div class="terminal-box">
-                [20:25:10] SYSTEM ........ ONLINE<br>
-                [20:25:12] TELEMETRY .... NOMINAL<br>
-                [20:25:15] C2 FIREWALL .. SECURE
+                [20:38:00] SYSTEM ........ ONLINE<br>
+                [20:38:05] RADUATION .... NOMINAL<br>
+                [20:38:10] C2 FIREWALL .. SECURE
             </div>
             <div class="tap-hint">🔍 Toque para abrir console completo</div>
         </div>
@@ -291,31 +302,39 @@
         const dadosModulos = {
             status: {
                 titulo: "🛡️ Relatório Tático de Operações",
-                texto: "<b>Nível de Ameaça Global:</b> 23/100 (Baixo Risco).<br><br>• <b>Enlaces de Telemetria:</b> 100% íntegros em Banda X e Ka.<br>• <b>Anomalias de C2:</b> Nenhuma detectada nas estações de solo primárias.<br>• <b>Status da Frota LEO:</b> Operando dentro dos parâmetros nominais de segurança."
+                texto: "<b>Nível de Ameaça Global:</b> 23/100 (Baixo Risco).<br><br>• <b>Enlaces de Telemetria:</b> 100% íntegros em Banda X e Ka.<br>• <b>Conjunções Críticas (Risco de Colisão):</b> 0 alertas nas últimas 24h.<br>• <b>Status da Frota LEO:</b> Operando dentro dos parâmetros nominais."
+            },
+            ai_briefing: {
+                titulo: "🧠 AstroGuard AI Executive Briefing",
+                texto: "<b>Parecer Autônomo da Inteligência SOC:</b><br><br><i>\"O ecossistema orbital e de solo encontra-se em estabilidade absoluta. Os flancos solares não apresentam ejeções de massa coronal diretas, e as constelações LEO mantêm manobras autônomas de desvio inativas por ausência de detritos em rota de colisão iminente. Perímetro seguro para operações terrestres de comando e controle.\"</i><br><br>• <b>Confiança da Análise:</b> 94%<br>• <b>Fonte:</b> Agregador Multi-Feed AstroGuard"
             },
             weather: {
                 titulo: "☀️ Clima Espacial, Energia & GPS",
-                texto: "<b>Análise de Impacto Magnético:</b><br><br>• ⚡ <b>Redes de Energia Elétrica:</b> Sem correntes induzidas geomagneticamente (GIC) prejudiciais registradas.<br>• 🛰️ <b>Sinais de GPS / GNSS:</b> Precisão centimétrica preservada, sem distorções ionosféricas relevantes.<br>• <b>Índice Kp:</b> 2.3 (Estável)."
+                texto: "<b>Análise de Impacto Magnético:</b><br><br>• ⚡ <b>Redes de Energia Elétrica:</b> Sem correntes induzidas geomagneticamente (GIC).<br>• 🛰️ <b>Sinais de GPS / GNSS:</b> Precisão milimétrica preservada.<br>• <b>Índice Kp:</b> 2.3 (Estável)."
+            },
+            radiation: {
+                titulo: "☢️ Monitor de Cinturão de Radiação (Van Allen)",
+                texto: "<b>Telemetria de Partículas Energéticas:</b><br><br>• 🔋 <b>Degradação de Painéis Solares:</b> Taxa mínima esperada.<br>• ⚡ <b>Fluxo de Elétrons Relativísticos:</b> Abaixo do limite de alerta de carga eletrostática em satélites.<br>• <b>Status:</b> Ambiente orbital seguro para eletrônicos sensíveis."
             },
             ground: {
                 titulo: "🔒 Auditoria de Cibersegurança de Solo",
-                texto: "<b>Proteção de Estações Terrenas (Antenas de Comando):</b><br><br>• 🛡️ <b>Firewall Perimétrico:</b> Ativo e bloqueando pacotes maliciosos externos.<br>• 🔑 <b>Criptografia de Uplink:</b> Chaves rotativas AES-256 sincronizadas.<br>• 🤖 <b>Intrusões:</b> Zero ocorrências de spoofing de sinal de comando nas últimas 72 horas."
+                texto: "<b>Proteção de Estações Terrenas (Antenas de Comando):</b><br><br>• 🛡️ <b>Firewall Perimétrico:</b> Ativo e bloqueando pacotes maliciosos externos.<br>• 🔑 <b>Criptografia de Uplink:</b> Chaves rotativas AES-256 sincronizadas.<br>• 🤖 <b>Intrusões:</b> Zero ocorrências de spoofing de sinal."
             },
             lua: {
                 titulo: "🌕 Astronomia: Sistema Terra-Lua",
-                texto: "<b>Parâmetros Orbitais Atuais:</b><br><br>• <b>Fase Lunar:</b> Crescente (68% de iluminação visível do Brasil).<br>• <b>Distância Geocêntrica:</b> 384.400 km.<br>• <b>Influência Gravitacional:</b> Estável."
+                texto: "<b>Parâmetros Orbitais Atuais:</b><br><br>• <b>Fase Lunar:</b> Crescente (68% visível do Brasil).<br>• <b>Distância Geocêntrica:</b> 384.400 km."
             },
             planetas: {
                 titulo: "🔭 Mapeamento de Planetas Visíveis",
-                texto: "<b>Observação Noturna:</b><br><br>• ✨ <b>Vênus:</b> Visível a Oeste no ocaso.<br>• 🪐 <b>Júpiter:</b> Ascendendo a Leste no início da madrugada.<br>• 🔴 <b>Marte:</b> Visível na alvorada."
+                texto: "<b>Observação Noturna:</b><br><br>• ✨ <b>Vênus:</b> Visível a Oeste no ocaso.<br>• 🪐 <b>Júpiter:</b> Ascendendo a Leste na madrugada."
             },
             lixo: {
                 titulo: "🛰️ Monitoramento de Lixo Espacial",
-                texto: "<b>Setor América do Sul / Brasil (ATL-BR):</b><br><br>• ⚠️ <b>Detritos Inativos:</b> 3 objetos sob rastreamento.<br>• 🔥 <b>Reentradas:</b> Nenhuma trajetória perigosa cruzando o espaço aéreo nacional hoje."
+                texto: "<b>Setor América do Sul / Brasil (ATL-BR):</b><br><br>• ⚠️ <b>Detritos Inativos:</b> 3 objetos sob rastreamento.<br>• 🔥 <b>Reentradas:</b> Nenhuma trajetória perigosa sobre o espaço aéreo nacional hoje."
             },
             terminal: {
                 titulo: "💻 Console de Logs do Sistema (Terminal)",
-                texto: "<b>Histórico de Processamento em Tempo Real:</b><br><br>[OK] Carregando subsistema AstroGuard v2.5<br>[OK] Conexão com CelesTrak estabelecida<br>[OK] Sincronização NOAA SWPC concluída<br>[OK] Módulo de alerta autônomo armado<br>[STATUS] Sistema operando sem falhas críticas."
+                texto: "<b>Histórico de Processamento em Tempo Real:</b><br><br>[OK] Carregando subsistema AstroGuard v3.0<br>[OK] Sincronização CelesTrak & NOAA ativa<br>[OK] Módulo de radiação e conjunções online<br>[STATUS] Sistema operando sem falhas críticas."
             }
         };
 
