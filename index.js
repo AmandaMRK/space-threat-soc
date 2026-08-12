@@ -25,7 +25,7 @@ async function consultarAnalistaSOC(pergunta) {
     const prompt = `Você é um Analista de SOC nível 3 especialista em Space Cybersecurity. Responda de forma técnica, direta e profissional sobre astronomia, segurança de satélites e ameaças espaciais. Pergunta do operador: ${pergunta}`;
     
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
         const result = await model.generateContent(prompt);
         return result.response.text();
     } catch (error) {
