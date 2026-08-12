@@ -20,22 +20,16 @@ function logEvent(level, message) {
     if (auditLogs.length > 30) auditLogs.pop();
 }
 
-// IA Analista SOC Espacial
+// IA Analista SOC Espacial com gemini-pro universal
 async function consultarAnalistaSOC(pergunta) {
     const prompt = `Você é um Analista de SOC nível 3 especialista em Space Cybersecurity. Responda de forma técnica, direta e profissional sobre astronomia, segurança de satélites e ameaças espaciais. Pergunta do operador: ${pergunta}`;
     
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
         const result = await model.generateContent(prompt);
         return result.response.text();
     } catch (error) {
-        try {
-            const fallbackModel = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
-            const result = await fallbackModel.generateContent(prompt);
-            return result.response.text();
-        } catch (err2) {
-            return "⚠️ Erro de conexão com o Analista SOC: " + error.message;
-        }
+        return "⚠️ Erro de conexão com o Analista SOC: " + error.message;
     }
 }
 
