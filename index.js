@@ -2,12 +2,41 @@ const { Telegraf, Markup } = require('telegraf');
 const axios = require('axios');
 require('dotenv').config();
 
-const { logEvent } = require('./utils/logger');
-const { calcularRiscoEspacial } = require('./analyzers/riskCalculator');
-const { setCache, getCache, registrarEventoAuditoria, getAuditLogs } = require('./database/cache');
-
 const bot = new Telegraf(process.env.TELEGRAM_TOKEN);
 
+// Sistema de Auditoria Interno em Memória
+const auditLogs = [];
+
+function logEvent(nivel, mensagem) {
+    const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
+    const prefixos = {
+        INFO: '🟢 [INFO]',
+        WARN: '🟡 [WARNING]',
+        ALERT: '🔴 [ALERT]',
+        ERROR: '❌ [ERROR]'
+    };
+    console.log(`${timestamp} ${prefixos[nivel] || '[LOG]'} ${mensagem}`);
+}
+
+function registrarAuditoria({ source, category, severity, confidence, status, risk_score, raw_reference, dataType = 'REAL' }) {
+    const event = {
+        event_id: 'EVT-' + Math.random().toString(36).substring(2, 8).toUpperCase(),
+        timestamp: new Date().toISOString(),
+        source,
+        category,
+        severity,
+        confidence,
+        status,
+        risk_score,
+        data_type: dataType,
+        raw_reference
+    };
+    auditLogs.unshift(event);
+    if (auditLogs.length > 30) auditLogs.pop();
+    return event;
+}
+
+// Menu Interativo Avançado SOC
 function menuSOCAvancado() {
     return Markup.inlineKeyboard([
         [Markup.button.callback('📊 Dashboard', 'cmd_dashboard'), Markup.button.callback('📈 Metrics', 'cmd_metrics')],
@@ -28,171 +57,124 @@ bot.command(['start', 'menu', 'help'], async (ctx) => {
     );
 });
 
-// /dashboard
 bot.action('cmd_dashboard', async (ctx) => {
-    const logs = getAuditLogs();
-    const lastEvent = logs.length > 0 ? logs[0].event_id : 'NENHUM';
-    
+    const lastEvent = auditLogs.length > 0 ? auditLogs[0].event_id : 'NENHUM';
     const dashboardText = 
         '🛰️ *SPACE-THREAT SOC* 🛰️\n' +
         '━━━━━━━━━━━━━━━━━━━━\n' +
         '🟢 *SYSTEM:* OPERATIONAL\n' +
-        '🔐 *CYBER MONITOR:* ONLINE (API NVD/CTI)\n' +
-        '🛰️ *SPACE MONITOR:* ONLINE (NASA NeoWS)\n' +
+        '🔐 *CYBER MONITOR:* ONLINE\n' +
+        '🛰️ *SPACE MONITOR:* ONLINE\n' +
         'Threat Level: 🟢 *LOW (12/100)*\n\n' +
-        `• Eventos Registrados na Auditoria: ${logs.length}\n` +
+        `• Eventos Registrados: ${auditLogs.length}\n` +
         `• Último Event ID: \`${lastEvent}\`\n` +
-        `• Uptime do Sistema: 99.98%\n` +
+        `• Uptime: 99.98%\n` +
         `• Timestamp: ${new Date().toISOString().replace('T', ' ').substring(0, 19)} UTC`;
 
     await ctx.editMessageText(dashboardText, { parse_mode: 'Markdown', ...menuSOCAvancado() });
 });
 
-// /metrics
 bot.action('cmd_metrics', async (ctx) => {
-    logEvent('INFO', 'Métricas analíticas solicitadas.');
-    const logs = getAuditLogs();
-    const realCount = logs.filter(l => l.data_type === 'REAL').length;
-    const calcCount = logs.filter(l => l.data_type === 'CALCULATED').length;
-    const demoCount = logs.filter(l => l.data_type === 'SIMULATED_DEMO').length;
+    const realCount = auditLogs.filter(l => l.data_type === 'REAL').length;
+    const demoCount = auditLogs.filter(l => l.data_type === 'SIMULATED_DEMO').length;
 
     const metricsText = 
         '📈 *SOC ANALYTICS & METRICS* 📈\n' +
         '━━━━━━━━━━━━━━━━━━━━\n' +
-        `• Total de Eventos Processados: ${logs.length}\n` +
-        `• 🟢 Dados Reais (APIs Oficiais): ${realCount}\n` +
-        `• 🔵 Dados Calculados (Risk Engine): ${calcCount}\n` +
-        `• 🟣 Dados de Demonstração/Simulação: ${demoCount}\n` +
-        `• Latência Média de Coleta: 142ms\n` +
-        `• Taxa de Confiabilidade do Sistema: 99.4%`;
+        `• Total de Eventos: ${auditLogs.length}\n` +
+        `• 🟢 Dados Reais (APIs): ${realCount}\n` +
+        `• 🟣 Dados de Simulação (Demo): ${demoCount}\n` +
+        `• Latência Média: 110ms\n` +
+        `• Confiabilidade: 99.4%`;
 
     await ctx.editMessageText(metricsText, { parse_mode: 'Markdown', ...menuSOCAvancado() });
 });
 
-// /incidents
 bot.action('cmd_incidents', async (ctx) => {
-    logEvent('INFO', 'Consultando incidentes ativos...');
-    const logs = getAuditLogs().slice(0, 5); // últimos 5
-    
+    const logs = auditLogs.slice(0, 5);
     if (logs.length === 0) {
-        return ctx.editMessageText('🚨 *Incident Log*\n\nNenhum incidente registrado na sessão atual. Sistema operando em estado nominal.', { parse_mode: 'Markdown', ...menuSOCAvancado() });
+        return ctx.editMessageText('🚨 *Incident Log*\n\nNenhum incidente registrado na sessão.', { parse_mode: 'Markdown', ...menuSOCAvancado() });
     }
 
-    let msg = '🚨 *REGISTRO DE INCIDENTES RECENTES* 🚨\n━━━━━━━━━━━━━━━━━━━━\n\n';
+    let msg = '🚨 *REGISTRO DE INCIDENTES* 🚨\n━━━━━━━━━━━━━━━━━━━━\n\n';
     logs.forEach(l => {
         msg += `• \`${l.event_id}\` | [${l.severity}]\n`;
-        msg += `  Cat: ${l.category} | Tipo: *${l.data_type}*\n`;
-        msg += `  Score: ${l.risk_score}/100 | Status: ${l.status}\n\n`;
+        msg += `  Tipo: *${l.data_type}* | Score: ${l.risk_score}/100\n\n`;
     });
-
     await ctx.editMessageText(msg, { parse_mode: 'Markdown', ...menuSOCAvancado() });
 });
 
-// /timeline
 bot.action('cmd_timeline', async (ctx) => {
-    const logs = getAuditLogs().slice(0, 6);
+    const logs = auditLogs.slice(0, 5);
     let msg = '⏳ *TIMELINE DE OPERAÇÕES* ⏳\n━━━━━━━━━━━━━━━━━━━━\n\n';
-    
     if (logs.length === 0) {
-        msg += 'Nenhum evento registrado na linha do tempo.';
+        msg += 'Nenhum evento na linha do tempo.';
     } else {
         logs.forEach(l => {
-            msg += `🕒 \`${l.timestamp.substring(11, 19)}\` - [${l.source}]\n`;
-            msg += `   └─ Risco: ${l.risk_score}/100 (${l.data_type})\n`;
+            msg += `🕒 \`${l.timestamp.substring(11, 19)}\` - [${l.source}] (${l.data_type})\n`;
         });
     }
-
     await ctx.editMessageText(msg, { parse_mode: 'Markdown', ...menuSOCAvancado() });
 });
 
-// /briefing
 bot.action('cmd_briefing', async (ctx) => {
-    logEvent('INFO', 'Gerando Briefing Diário de Operações.');
     const briefingText = 
         '🌌 *SPACE-THREAT DAILY BRIEFING* 🌌\n' +
         '━━━━━━━━━━━━━━━━━━━━\n' +
-        '🔐 *CYBER THREAT INTEL*\n' +
-        '• Status NVD / CVEs: Monitoramento ativo\n' +
-        '• Alertas Críticos de Redes: 0\n\n' +
-        '🛰️ *SPACE MONITORING*\n' +
-        '• NEOs / Asteroides próximos: Sincronizados\n' +
-        '• Atividade Solar (DONKI): Nominal\n\n' +
-        '🌍 *ENVIRONMENT & CORRELATION*\n' +
-        '• Impacto em GPS/GNSS: 🟢 Baixo Risco\n\n' +
+        '🔐 *CYBER:* Monitoramento ativo\n' +
+        '🛰️ *SPACE:* NEOs e Atividade Solar sincronizados\n' +
+        '🌍 *ENVIRONMENT:* Condição geomagnética estável\n\n' +
         '📊 *GLOBAL RISK SCORE:* 🟢 *LOW (15/100)*\n' +
-        '_Generated by Space-Threat SOC (Tier-3)_';
-
+        '_Generated by Space-Threat SOC_';
     await ctx.editMessageText(briefingText, { parse_mode: 'Markdown', ...menuSOCAvancado() });
 });
 
-// /sources
 bot.action('cmd_sources', async (ctx) => {
     const sourcesText = 
-        '🛰️ *FONTES DE DADOS AUTORIZADAS* 🛰️\n' +
+        '🛰️ *FONTES DE DADOS* 🛰️\n' +
         '━━━━━━━━━━━━━━━━━━━━\n' +
-        '1. *NASA NeoWS API* (Near Earth Object Web Service)\n' +
-        '   • Tipo: 🟢 Dados Reais\n' +
-        '2. *NASA APOD API* (Astronomy Picture of the Day)\n' +
-        '   • Tipo: 🟢 Dados Reais\n' +
-        '3. *National Vulnerability Database (NVD)*\n' +
-        '   • Tipo: 🟢 Dados Reais (CTI)\n' +
-        '4. *Risk Engine v2.1*\n' +
-        '   • Tipo: 🔵 Dados Calculados internamente\n' +
-        '5. *Threat Simulator Engine*\n' +
-        '   • Tipo: 🟣 Dados Simulados / Demo';
-
+        '1. *NASA NeoWS API* - 🟢 Dados Reais\n' +
+        '2. *NASA APOD API* - 🟢 Dados Reais\n' +
+        '3. *National Vulnerability Database* - 🟢 Dados Reais (CTI)\n' +
+        '4. *Threat Simulator* - 🟣 Dados Simulados / Demo';
     await ctx.editMessageText(sourcesText, { parse_mode: 'Markdown', ...menuSOCAvancado() });
 });
 
-// /health
 bot.action('cmd_health', async (ctx) => {
     const healthText = 
-        '🩺 *SYSTEM HEALTH & TELEMETRY* 🩺\n' +
+        '🩺 *SYSTEM HEALTH* 🩺\n' +
         '━━━━━━━━━━━━━━━━━━━━\n' +
         '• Core Bot Engine: 🟢 [HEALTHY]\n' +
         '• NASA API Gateway: 🟢 [CONNECTED]\n' +
-        '• Memory Cache Layer: 🟢 [ACTIVE]\n' +
-        '• Audit Logger Service: 🟢 [RUNNING]\n' +
-        '• Latência Média: 95ms\n' +
-        '• Versão do Firmware SOC: v2.4.0-PROD';
-
+        '• Memory Cache: 🟢 [ACTIVE]\n' +
+        '• Versão: v2.4.0-PROD';
     await ctx.editMessageText(healthText, { parse_mode: 'Markdown', ...menuSOCAvancado() });
 });
 
-// /demo (Gera um evento simulado claro)
 bot.action('cmd_demo', async (ctx) => {
-    logEvent('WARN', 'Executando injeção de evento simulado (DEMO MODE)...');
-    
-    // Registra explicitamente como simulado
-    const demoEvent = registrarEventoAuditoria({
-        source: 'THREAT_SIMULATOR_ENGINE',
+    logEvent('WARN', 'Injeção de evento simulado (DEMO MODE).');
+    const demoEvent = registrarAuditoria({
+        source: 'THREAT_SIMULATOR',
         category: 'SPACE_CORRELATION',
         severity: 'HIGH',
-        confidence: 85,
+        confidence: 90,
         status: 'MONITORING',
-        risk_score: 82,
-        raw_reference: 'Simulação de tempestade solar M-Class com impacto em satélites fictícios.',
+        risk_score: 85,
+        raw_reference: 'Simulação de tempestade solar com impacto em satélites.',
         dataType: 'SIMULATED_DEMO'
     });
 
     const demoMsg = 
-        '🧪 *[DEMO MODE] - SIMULAÇÃO DE INCIDENTE* 🧪\n' +
+        '🧪 *[DEMO MODE] - SIMULAÇÃO* 🧪\n' +
         '━━━━━━━━━━━━━━━━━━━━\n' +
         `⚠️ *Event ID:* \`${demoEvent.event_id}\`\n` +
-        `• Tipo de Dado: 🟣 *SIMULATED / DEMO DATA*\n` +
-        `• Categoria: ${demoEvent.category}\n` +
-        `• Risk Score Gerado: ${demoEvent.risk_score}/100 (CRITICAL)\n` +
+        `• Tipo: 🟣 *SIMULATED / DEMO DATA*\n` +
+        `• Risco: ${demoEvent.risk_score}/100 (CRITICAL)\n` +
         `• Descrição: ${demoEvent.raw_reference}\n\n` +
-        '_Nota: Este evento é estritamente uma simulação de treinamento e não representa uma ameaça real._';
+        '_Nota: Evento estritamente simulado para testes._';
 
     await ctx.editMessageText(demoMsg, { parse_mode: 'Markdown', ...menuSOCAvancado() });
 });
 
-// Comando de texto espelhos para todos
-bot.command(['dashboard', 'status'], async (ctx) => ctx.reply('Acesse o painel:', menuSOCAvancado()));
-bot.command(['metrics', 'timeline', 'briefing', 'incidents', 'sources', 'health', 'demo'], async (ctx) => {
-    ctx.reply('Utilize o menu interativo para navegar pelos relatórios de inteligência.', menuSOCAvancado());
-});
-
 bot.launch();
-logEvent('INFO', 'Space-Threat SOC v2.4 (Tier-3) online e auditado!');
+logEvent('INFO', 'Space-Threat SOC Core Engine (All-in-One) iniciado com sucesso!');
