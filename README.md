@@ -1,5 +1,7 @@
 # 🛰️ Space-Threat SOC
 
+![Space-Threat SOC Preview](assets/preview.png)
+
 > Centro de Monitoramento Experimental combinando Cyber Threat Intelligence (CTI), Segurança da Informação e Monitoramento Espacial.
 
 ---
