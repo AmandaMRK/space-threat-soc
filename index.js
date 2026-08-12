@@ -5,26 +5,12 @@ const token = process.env.TELEGRAM_TOKEN;
 const apiKey = process.env.GEMINI_API_KEY;
 
 if (!token || !apiKey) {
-    console.error("ERRO CRITICO: TELEGRAM_TOKEN ou GEMINI_API_KEY faltando!");
+    console.error("ERRO CRITICO: Token ou API Key faltando!");
     process.exit(1);
 }
 
 const bot = new Telegraf(token);
-const auditLogs = [];
 
-function logEvent(level, message) {
-    const timestamp = new Date().toISOString().replace('T', ' ').substring(0, 19);
-    console.log(`[${timestamp}] [${level.toUpperCase()}] ${message}`);
-    auditLogs.unshift({
-        event_id: Math.random().toString(36).substring(2, 9).toUpperCase(),
-        level,
-        message,
-        timestamp
-    });
-    if (auditLogs.length > 30) auditLogs.pop();
-}
-
-// Chamada HTTP direta blindada (sem conflitos de SDK)
 async function consultarAnalistaSOC(pergunta) {
     const prompt = `Você é um Analista de SOC nível 3 especialista em Space Cybersecurity. Responda de forma técnica e direta: ${pergunta}`;
     
@@ -52,31 +38,28 @@ async function consultarAnalistaSOC(pergunta) {
     }
 }
 
-function menuSOCAvancado() {
+function menuSOC() {
     return Markup.inlineKeyboard([
-        [Markup.button.callback('📊 Dashboard', 'cmd_dashboard'), Markup.button.callback('📈 Metrics', 'cmd_metrics')],
-        [Markup.button.callback('🚨 Incidents', 'cmd_incidents'), Markup.button.callback('⏳ Timeline', 'cmd_timeline')],
-        [Markup.button.callback('📋 Briefing', 'cmd_briefing'), Markup.button.callback('🛰️ Sources', 'cmd_sources')],
-        [Markup.button.callback('🩺 Health Check', 'cmd_health'), Markup.button.callback('🛠️ Demo Mode', 'cmd_demo')]
+        [Markup.button.callback('📊 Dashboard', 'cmd_dash'), Markup.button.callback('📈 Metrics', 'cmd_metrics')],
+        [Markup.button.callback('🚨 Incidents', 'cmd_incidents'), Markup.button.callback('🛠️ Demo', 'cmd_demo')]
     ]);
 }
 
 bot.start(async (ctx) => {
-    logEvent('INFO', `Comando /start acionado por ${ctx.from.username || ctx.from.id}`);
+    console.log(`Comando /start recebido de ${ctx.from.id}`);
     return ctx.reply(
-        '🛡️ *SPACE-THREAT SOC [TIER-3]* 🛰️\n' +
-        '_____________________\n' +
-        'Centro avançado de Inteligência de Ameaças, CTI e Monitoramento Espacial.\n\n' +
-        'Selecione um módulo operacional abaixo ou digite qualquer pergunta:',
-        { parse_mode: 'Markdown', ...menuSOCAvancado() }
+        '🛡️ *SPACE-THREAT SOC [TIER-3]* 🛰️\n\n' +
+        'Centro de Inteligência de Ameaças e Monitoramento Espacial.\n' +
+        'Selecione uma opção ou digite sua pergunta para a IA:',
+        { parse_mode: 'Markdown', ...menuSOC() }
     );
 });
 
 bot.on('text', async (ctx) => {
     if (ctx.message.text.startsWith('/')) return;
     
-    logEvent('INFO', `Mensagem recebida de ${ctx.from.username || ctx.from.id}`);
-    const statusMsg = await ctx.reply('⏳ *Processando inteligência com Analista SOC...*', { parse_mode: 'Markdown' });
+    console.log(`Mensagem de texto recebida: ${ctx.message.text}`);
+    const statusMsg = await ctx.reply('⏳ *Processando com Analista SOC...*', { parse_mode: 'Markdown' });
     
     const resposta = await consultarAnalistaSOC(ctx.message.text);
     
@@ -87,15 +70,13 @@ bot.on('text', async (ctx) => {
     }
 });
 
-bot.action('cmd_dashboard', async (ctx) => {
-    await ctx.answerCbQuery();
-    return ctx.editMessageText('🛰️ *DASHBOARD ONLINE*\nSistema operando nominalmente.', { parse_mode: 'Markdown', ...menuSOCAvancado() });
-});
-
 bot.action(/.*/, async (ctx) => {
-    try { await ctx.answerCbQuery(); } catch(e){}
+    try {
+        await ctx.answerCbQuery();
+        await ctx.editMessageText('🛰️ *Módulo SOC Operacional*\nPainel atualizado com sucesso.', { parse_mode: 'Markdown', ...menuSOC() });
+    } catch (e) {}
 });
 
 bot.launch().then(() => {
-    logEvent('INFO', 'Bot iniciado com sucesso via Telegraf Polling!');
+    console.log('Space-Threat SOC Bot rodando com sucesso!');
 });
