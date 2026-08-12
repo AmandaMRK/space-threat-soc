@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AstroGuard - Space SOC</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body {
+            background-color: #020208;
+            color: #e0e6ed;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
+        }
+        /* Fundo de Céu Estrelado Animado */
+        .stars {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            background: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+            z-index: -1;
+        }
+        .star {
+            position: absolute;
+            background: #ffffff;
+            border-radius: 50%;
+            animation: twinkle 2s infinite ease-in-out;
+        }
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; transform: scale(0.8); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        /* Container Principal estilo Nave */
+        .container {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(0, 242, 254, 0.2);
+            margin-bottom: 20px;
+        }
+        header h1 {
+            font-size: 1.5rem;
+            color: #00f2fe;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+        }
+        header p {
+            font-size: 0.8rem;
+            color: #a0aec0;
+            margin-top: 5px;
+        }
+
+        /* Cards de Módulos (Glassmorphism) */
+        .card {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(0, 242, 254, 0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        .card h3 {
+            font-size: 1rem;
+            color: #4facfe;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card p, .card ul {
+            font-size: 0.85rem;
+            color: #cbd5e1;
+            line-height: 1.4;
+        }
+        .card ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .card ul li {
+            padding: 4px 0;
+            border-bottom: 1px dashed rgba(255,255,255,0.1);
+        }
+
+        /* Status Badge */
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            font-size: 0.7rem;
+            border-radius: 4px;
+            background: #10b981;
+            color: #fff;
+            font-weight: bold;
+            float: right;
+        }
+        .badge.warning { background: #f59e0b; }
+
+        /* Rodapé de Acesso ao Bot */
+        .footer-action {
+            text-align: center;
+            margin-top: 20px;
+            padding-bottom: 30px;
+        }
+        .btn-telegram {
+            display: inline-block;
+            background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
+            color: #090a0f;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9rem;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Fundo de Estrelas -->
+    <div class="stars" id="starsContainer"></div>
+
+    <div class="container">
+        <header>
+            <h1>🛡️ ASTROGUARD SOC</h1>
+            <p>Central Tática de Monitoramento Espacial & Órbita</p>
+        </header>
+
+        <!-- Status Geral -->
+        <div class="card">
+            <h3>Status da Frota e Radares <span class="badge">NOMINAL</span></h3>
+            <p>Sistemas de rastreamento LEO e defesa de telemetria operando em frequência contínua.</p>
+        </div>
+
+        <!-- Fases da Lua e Terra -->
+        <div class="card">
+            <h3>🌕 Fase Lunar & Condição da Terra</h3>
+            <p><strong>Fase Atual:</strong> Lua Crescente Iluminada (68%)</p>
+            <p style="margin-top: 5px;">Distância Média Terra-Lua: 384.400 km. Alinhamento gravitacional estável.</p>
+        </div>
+
+        <!-- Planetas Visíveis Hoje -->
+        <div class="card">
+            <h3>🔭 Planetas Visíveis Hoje (Céu do Brasil)</h3>
+            <ul>
+                <li>✨ <strong>Vênus:</strong> Visível a Oeste logo após o pôr do sol.</li>
+                <li>🪐 <strong>Júpiter:</strong> Emersão a Leste no início da madrugada.</li>
+                <li>🔴 <strong>Marte:</strong> Observável nas primeiras horas da manhã.</li>
+            </ul>
+        </div>
+
+        <!-- Lixo Espacial e Satélites no Brasil -->
+        <div class="card">
+            <h3>🛰️ Lixo Espacial & Satélites <span class="badge warning">ATENÇÃO</span></h3>
+            <p>Monitoramento de reentrada sobre o espaço aéreo da América do Sul e Brasil:</p>
+            <ul style="margin-top: 6px;">
+                <li>⚠️ Estação Terrena Secundária: Sem intrusões de sinal.</li>
+                <li>☄️ Detritos monitorados cruzando o setor ATL-BR: 3 objetos inativos (Sem risco de impacto terrestre imediato).</li>
+            </ul>
+        </div>
+
+        <!-- Bot do Telegram -->
+        <div class="footer-action">
+            <a href="https://t.me/SpaceSOC_bot" target="_blank" class="btn-telegram">🚀 Abrir Alertas no Telegram</a>
+        </div>
+    </div>
+
+    <script>
+        // Script para gerar estrelas aleatórias no fundo dinamicamente
+        const container = document.getElementById('starsContainer');
+        const count = 70;
+        for (let i = 0; i < count; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            const size = Math.random() * 2.5 + 'px';
+            star.style.width = size;
+            star.style.height = size;
+            star.style.top = Math.random() * 100 + '%';
+            star.style.left = Math.random() * 100 + '%';
+            star.style.animationDuration = (Math.random() * 3 + 1) + 's';
+            star.style.animationDelay = (Math.random() * 2) + 's';
+            container.appendChild(star);
+        }
+    </script>
+</body>
+</html>
