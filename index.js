@@ -1,5 +1,4 @@
 const { Telegraf, Markup } = require('telegraf');
-const { GoogleGenAI } = require("@google/genai");
 require('dotenv').config();
 
 const token = process.env.TELEGRAM_TOKEN;
@@ -11,8 +10,6 @@ if (!token || !apiKey) {
 }
 
 const bot = new Telegraf(token);
-const ai = new GoogleGenAI({ apiKey: apiKey });
-
 const auditLogs = [];
 
 function logEvent(level, message) {
@@ -27,17 +24,31 @@ function logEvent(level, message) {
     if (auditLogs.length > 30) auditLogs.pop();
 }
 
+// Chamada HTTP direta blindada (sem conflitos de SDK)
 async function consultarAnalistaSOC(pergunta) {
     const prompt = `Você é um Analista de SOC nível 3 especialista em Space Cybersecurity. Responda de forma técnica e direta: ${pergunta}`;
     
     try {
-        const response = await ai.models.generateContent({
-            model: 'gemini-3.6-flash',
-            contents: prompt,
+        const url = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                contents: [{ parts: [{ text: prompt }] }]
+            })
         });
-        return response.text;
+
+        const data = await response.json();
+        
+        if (data.candidates && data.candidates[0].content.parts[0].text) {
+            return data.candidates[0].content.parts[0].text;
+        } else if (data.error) {
+            return "⚠️ Erro da API do Gemini: " + data.error.message;
+        } else {
+            return "⚠️ Resposta vazia da API do Gemini.";
+        }
     } catch (error) {
-        return "⚠️ Erro de conexão com o Analista SOC: " + error.message;
+        return "⚠️ Erro de conexão HTTP: " + error.message;
     }
 }
 
