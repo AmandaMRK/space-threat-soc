@@ -6,7 +6,7 @@ const token = process.env.TELEGRAM_TOKEN;
 const apiKey = process.env.GEMINI_API_KEY;
 
 if (!token || !apiKey) {
-    console.error("ERRO CRITICO: TELEGRAM_TOKEN ou GEMINI_API_KEY não configurados no .env / Railway!");
+    console.error("ERRO CRITICO: TELEGRAM_TOKEN ou GEMINI_API_KEY faltando!");
     process.exit(1);
 }
 
@@ -37,39 +37,34 @@ function menuSOCAvancado() {
 }
 
 bot.start(async (ctx) => {
-    try {
-        logEvent('INFO', `Comando /start acionado por ${ctx.from.username || ctx.from.id}`);
-        return await ctx.reply(
-            '🛡️ *SPACE-THREAT SOC [TIER-3]* 🛰️\n' +
-            '_____________________\n' +
-            'Centro avançado de Inteligência de Ameaças, CTI e Monitoramento Espacial.\n\n' +
-            'Selecione um módulo operacional abaixo ou digite qualquer pergunta:',
-            { parse_mode: 'Markdown', ...menuSOCAvancado() }
-        );
-    } catch (err) {
-        console.error("Erro no /start:", err);
-    }
+    logEvent('INFO', `Comando /start acionado por ${ctx.from.username || ctx.from.id}`);
+    return ctx.reply(
+        '🛡️ *SPACE-THREAT SOC [TIER-3]* 🛰️\n' +
+        '_____________________\n' +
+        'Centro avançado de Inteligência de Ameaças, CTI e Monitoramento Espacial.\n\n' +
+        'Selecione um módulo operacional abaixo ou digite qualquer pergunta:',
+        { parse_mode: 'Markdown', ...menuSOCAvancado() }
+    );
 });
 
 bot.on('text', async (ctx) => {
     if (ctx.message.text.startsWith('/')) return;
-    
+
     logEvent('INFO', `Mensagem recebida de ${ctx.from.username || ctx.from.id}`);
-    const statusMsg = await ctx.reply('⏳ *Processando comando...*', { parse_mode: 'Markdown' });
-    
+    const statusMsg = await ctx.reply('⏳ *Processando inteligência com Analista SOC...*', { parse_mode: 'Markdown' });
+
     try {
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-        const prompt = `Você é um Analista de SOC especialista em Space Cybersecurity. Responda de forma técnica e direta: ${ctx.message.text}`;
+        const prompt = `Você é um Analista de SOC nível 3 especialista em Space Cybersecurity. Responda de forma técnica e direta: ${ctx.message.text}`;
         const result = await model.generateContent(prompt);
         const resposta = result.response.text();
 
         await ctx.telegram.editMessageText(ctx.chat.id, statusMsg.message_id, null, `🧠 *Resposta do Analista SOC:*\n\n${resposta}`, { parse_mode: 'Markdown' });
     } catch (error) {
-        await ctx.telegram.editMessageText(ctx.chat.id, statusMsg.message_id, null, `⚠️ *Modo Operacional de Contingência* (IA temporariamente indisponível na chave).\n\nSeu comando foi registrado com sucesso nos logs do SOC!`, { parse_mode: 'Markdown' });
+        await ctx.telegram.editMessageText(ctx.chat.id, statusMsg.message_id, null, `⚠️ *Modo Contingência SOC* (IA temporariamente indisponível na chave).\n\nErro técnico registrado: ${error.message}`, { parse_mode: 'Markdown' });
     }
 });
 
-// Ações dos botões
 bot.action('cmd_dashboard', async (ctx) => {
     await ctx.answerCbQuery();
     return ctx.editMessageText('🛰️ *DASHBOARD ONLINE*\nSistema operando nominalmente.', { parse_mode: 'Markdown', ...menuSOCAvancado() });
@@ -81,9 +76,4 @@ bot.action(/.*/, async (ctx) => {
 
 bot.launch().then(() => {
     logEvent('INFO', 'Bot iniciado com sucesso via Telegraf Polling!');
-}).catch((err) => {
-    console.error('Erro ao iniciar bot:', err);
 });
-
-process.once('SIGINT', () => bot.stop('SIGINT'));
-process.once('SIGTERM', () => bot.stop('SIGTERM'));
