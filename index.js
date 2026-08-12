@@ -1,5 +1,5 @@
 const { Telegraf, Markup } = require('telegraf');
-const { GoogleGenerativeAI } = require("@google/generative-ai");
+const { GoogleGenAI } = require("@google/genai");
 require('dotenv').config();
 
 const token = process.env.TELEGRAM_TOKEN;
@@ -11,7 +11,7 @@ if (!token || !apiKey) {
 }
 
 const bot = new Telegraf(token);
-const genAI = new GoogleGenerativeAI(apiKey);
+const ai = new GoogleGenAI({ apiKey: apiKey });
 
 const auditLogs = [];
 
@@ -31,17 +31,13 @@ async function consultarAnalistaSOC(pergunta) {
     const prompt = `Você é um Analista de SOC nível 3 especialista em Space Cybersecurity. Responda de forma técnica e direta: ${pergunta}`;
     
     try {
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }, { apiVersion: 'v1' });
-        const result = await model.generateContent(prompt);
-        return result.response.text();
-    } catch (e1) {
-        try {
-            const model2 = genAI.getGenerativeModel({ model: "gemini-1.0-pro" });
-            const result2 = await model2.generateContent(prompt);
-            return result2.response.text();
-        } catch (e2) {
-            return "⚠️ Erro de IA: " + e1.message;
-        }
+        const response = await ai.models.generateContent({
+            model: 'gemini-3.6-flash',
+            contents: prompt,
+        });
+        return response.text;
+    } catch (error) {
+        return "⚠️ Erro de conexão com o Analista SOC: " + error.message;
     }
 }
 
@@ -71,11 +67,12 @@ bot.on('text', async (ctx) => {
     logEvent('INFO', `Mensagem recebida de ${ctx.from.username || ctx.from.id}`);
     const statusMsg = await ctx.reply('⏳ *Processando inteligência com Analista SOC...*', { parse_mode: 'Markdown' });
     
+    const resposta = await consultarAnalistaSOC(ctx.message.text);
+    
     try {
-        const resposta = await consultarAnalistaSOC(ctx.message.text);
         await ctx.telegram.editMessageText(ctx.chat.id, statusMsg.message_id, null, `🧠 *Resposta do Analista SOC:*\n\n${resposta}`, { parse_mode: 'Markdown' });
-    } catch (error) {
-        await ctx.telegram.editMessageText(ctx.chat.id, statusMsg.message_id, null, `⚠️ *Modo Contingência SOC* (Erro ao processar IA).`, { parse_mode: 'Markdown' });
+    } catch (e) {
+        await ctx.reply(`🧠 *Resposta do Analista SOC:*\n\n${resposta}`, { parse_mode: 'Markdown' });
     }
 });
 

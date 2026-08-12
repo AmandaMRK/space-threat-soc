@@ -7,9 +7,10 @@
     "start": "node index.js"
   },
   "dependencies": {
+    "@google/genai": "^2.16.0",
     "@google/generative-ai": "^0.24.1",
     "axios": "^1.7.2",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.6.1",
     "telegraf": "^4.16.3"
   }
 }
