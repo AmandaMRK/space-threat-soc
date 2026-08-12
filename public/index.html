@@ -13,7 +13,6 @@
             position: relative;
             min-height: 100vh;
         }
-        /* Fundo de Céu Estrelado Animado */
         .stars {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -31,7 +30,6 @@
             0%, 100% { opacity: 0.2; transform: scale(0.8); }
             50% { opacity: 1; transform: scale(1.2); }
         }
-
         .container {
             max-width: 480px;
             margin: 0 auto;
@@ -54,8 +52,8 @@
             color: #a0aec0;
             margin-top: 4px;
         }
-
-        /* Cards do SOC */
+        
+        /* Cards Interativos */
         .card {
             background: rgba(15, 23, 42, 0.75);
             border: 1px solid rgba(0, 242, 254, 0.3);
@@ -64,6 +62,12 @@
             margin-bottom: 12px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(6px);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .card:active {
+            transform: scale(0.98);
+            border-color: #00f2fe;
         }
         .card h3 {
             font-size: 0.95rem;
@@ -78,8 +82,9 @@
             color: #cbd5e1;
             line-height: 1.4;
         }
+        .card ul { list-style-type: none; padding-left: 0; }
+        .card ul li { padding: 3px 0; border-bottom: 1px dashed rgba(255,255,255,0.08); }
 
-        /* Status Badges */
         .badge {
             font-size: 0.65rem;
             padding: 3px 8px;
@@ -89,9 +94,7 @@
         }
         .badge.nominal { background: #10b981; color: #fff; }
         .badge.warning { background: #f59e0b; color: #fff; }
-        .badge.offline { background: #ef4444; color: #fff; }
 
-        /* Threat Score Box */
         .score-box {
             display: flex;
             align-items: center;
@@ -102,43 +105,57 @@
             border-radius: 8px;
             margin-top: 8px;
         }
-        .score-number {
-            font-size: 1.6rem;
-            font-weight: bold;
-            color: #10b981;
-        }
-        .score-info {
-            font-size: 0.75rem;
-            color: #94a3b8;
-            text-align: right;
-        }
-
+        .score-number { font-size: 1.6rem; font-weight: bold; color: #10b981; }
+        .score-info { font-size: 0.75rem; color: #94a3b8; text-align: right; }
         .source-footer {
-            font-size: 0.7rem;
-            color: #64748b;
-            margin-top: 8px;
-            border-top: 1px solid rgba(255,255,255,0.05);
-            padding-top: 6px;
-            display: flex;
-            justify-content: space-between;
+            font-size: 0.7rem; color: #64748b; margin-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.05); padding-top: 6px;
+            display: flex; justify-content: space-between;
         }
 
-        .footer-action {
-            text-align: center;
-            margin-top: 15px;
-            padding-bottom: 25px;
+        /* Janela Modal (Detalhes ao Clicar) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 2, 8, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
         }
+        .modal-content {
+            background: #0b1329;
+            border: 1px solid #00f2fe;
+            border-radius: 14px;
+            padding: 20px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 0 25px rgba(0, 242, 254, 0.4);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 12px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 8px;
+        }
+        .modal-header h2 { font-size: 1.1rem; color: #00f2fe; }
+        .close-btn { background: none; border: none; color: #ef4444; font-size: 1.2rem; cursor: pointer; font-weight: bold; }
+        .modal-body { font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; }
+
+        .footer-action { text-align: center; margin-top: 15px; padding-bottom: 25px; }
         .btn-telegram {
             display: inline-block;
             background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
-            color: #090a0f;
-            padding: 10px 20px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 0.85rem;
+            color: #090a0f; padding: 10px 20px; border-radius: 20px;
+            text-decoration: none; font-weight: bold; font-size: 0.85rem;
             box-shadow: 0 0 12px rgba(0, 242, 254, 0.4);
         }
+        .tap-hint { font-size: 0.65rem; color: #38bdf8; text-align: right; margin-top: 4px; font-style: italic; }
     </style>
 </head>
 <body>
@@ -151,12 +168,12 @@
             <p>Space Threat Intelligence & Orbit Defense</p>
         </header>
 
-        <!-- DASHBOARD PRINCIPAL / THREAT SCORE -->
-        <div class="card">
+        <!-- CARD 1: STATUS DA OPERAÇÃO -->
+        <div class="card" onclick="abrirDetalhes('status')">
             <h3>Status da Operação <span class="badge nominal">🟢 NOMINAL</span></h3>
             <div class="score-box">
                 <div>
-                    <div class="score-number" id="threatScoreVal">23 / 100</div>
+                    <div class="score-number">23 / 100</div>
                     <div style="font-size: 0.7rem; color: #38bdf8;">LOW THREAT LEVEL</div>
                 </div>
                 <div class="score-info">
@@ -165,56 +182,126 @@
                     Reentradas: <b>0</b>
                 </div>
             </div>
-            <p style="margin-top: 8px; font-size: 0.75rem; color: #94a3b8;">
-                *Fatores de pontuação: Atividade geomagnética estável e ausência de objetos PHA em rota crítica.
-            </p>
+            <div class="tap-hint">🔍 Toque para ver relatório tático completo</div>
         </div>
 
-        <!-- MÓDULO 2: SPACE WEATHER -->
-        <div class="card">
-            <h3>☀️ Space Weather <span class="badge nominal" id="swStatusBadge">ONLINE</span></h3>
-            <p><strong>Atividade Solar:</strong> <span id="swSolar">Baixa / Estável</span></p>
-            <p><strong>Índice Kp:</strong> <span id="swKp">2.3 (Calmo)</span></p>
-            <p><strong>Tempestade Geomagnética:</strong> Nenhum alerta ativo</p>
-            <p><strong>CME (Ejeção de Massa Coronal):</strong> Não detectada</p>
+        <!-- CARD 2: SPACE WEATHER -->
+        <div class="card" onclick="abrirDetalhes('weather')">
+            <h3>☀️ Space Weather <span class="badge nominal">ONLINE</span></h3>
+            <p><strong>Atividade Solar:</strong> Baixa / Estável | <strong>Kp:</strong> 2.3</p>
             <div class="source-footer">
-                <span>Fonte: NOAA / Space Weather Prediction Center</span>
+                <span>Fonte: NOAA / SWPC</span>
                 <span id="swTimestamp">Atualizado: --:--</span>
             </div>
+            <div class="tap-hint">🔍 Toque para detalhes de tempestade solar</div>
         </div>
 
-        <!-- MÓDULO 7: ALERT ENGINE (Último Alerta Ativo) -->
-        <div class="card" style="border-left: 3px solid #f59e0b;">
-            <h3>🚨 Space Threat Alert <span class="badge warning">MONITORANDO</span></h3>
-            <p><strong>Tipo:</strong> Atividade Solar / Vento Solar</p>
-            <p><strong>Severidade:</strong> 🟡 ATENÇÃO</p>
-            <p><strong>Confiança dos Dados:</strong> 85% (Base NOAA)</p>
-            <p style="margin-top: 6px; font-size: 0.78rem;">Monitoramento de partículas de alta velocidade em rota de alta latitude.</p>
+        <!-- CARD 3: FASE LUNAR & TERRA -->
+        <div class="card" onclick="abrirDetalhes('lua')">
+            <h3>🌕 Fase Lunar & Condição da Terra</h3>
+            <p><strong>Fase Atual:</strong> Lua Crescente Iluminada (68%)</p>
+            <p style="margin-top: 4px;">Distância Média Terra-Lua: 384.400 km.</p>
+            <div class="tap-hint">🔍 Toque para ver dados astronômicos</div>
         </div>
 
-        <!-- Link para o Telegram -->
+        <!-- CARD 4: PLANETAS VISÍVEIS -->
+        <div class="card" onclick="abrirDetalhes('planetas')">
+            <h3>🔭 Planetas Visíveis Hoje (Céu do Brasil)</h3>
+            <ul>
+                <li>✨ <strong>Vênus:</strong> Visível a Oeste no pôr do sol.</li>
+                <li>🪐 <strong>Júpiter:</strong> Emersão a Leste na madrugada.</li>
+            </ul>
+            <div class="tap-hint">🔍 Toque para ver mapa de visibilidade</div>
+        </div>
+
+        <!-- CARD 5: LIXO ESPACIAL & SATÉLITES -->
+        <div class="card" onclick="abrirDetalhes('lixo')">
+            <h3>🛰️ Lixo Espacial & Satélites <span class="badge warning">ATENÇÃO</span></h3>
+            <p>Monitoramento de reentrada sobre o espaço aéreo da América do Sul e Brasil.</p>
+            <div class="tap-hint">🔍 Toque para ver setores monitorados</div>
+        </div>
+
+        <!-- BOTÃO TELEGRAM -->
         <div class="footer-action">
             <a href="https://t.me/SpaceSOC_bot" target="_blank" class="btn-telegram">🚀 Acessar Bot de Alertas no Telegram</a>
         </div>
     </div>
 
+    <!-- JANELA MODAL DE DETALHES INTERATIVOS -->
+    <div class="modal" id="modalDetalhes">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitulo">Detalhes do Módulo</h2>
+                <button class="close-btn" onclick="fecharDetalhes()">✕</button>
+            </div>
+            <div class="modal-body" id="modalTexto">
+                Carregando telemetria...
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Geração de estrelas de fundo
+        // Estrelas de fundo
         const container = document.getElementById('starsContainer');
         for (let i = 0; i < 60; i++) {
             const star = document.createElement('div');
             star.className = 'star';
             const size = Math.random() * 2 + 'px';
-            star.style.width = size;
-            star.style.height = size;
+            star.style.width = size; star.style.height = size;
             star.style.top = Math.random() * 100 + '%';
             star.style.left = Math.random() * 100 + '%';
             star.style.animationDuration = (Math.random() * 3 + 1) + 's';
             container.appendChild(star);
         }
-
-        // Atualizar timestamp dinâmico no painel
         document.getElementById('swTimestamp').innerText = "Atualizado: " + new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+
+        // Sistema de abas interativas (Modais)
+        const dadosModulos = {
+            status: {
+                titulo: "🛡️ Relatório Tático de Operações",
+                texto: "<b>Nível de Ameaça Global:</b> 23/100 (Baixo Risco).<br><br>• <b>Enlaces de Telemetria:</b> 100% íntegros em Banda X e Ka.<br>• <b>Anomalias de C2:</b> Nenhuma detectada nas estações de solo primárias.<br>• <b>Status da Frota LEO:</b> Operando dentro dos parâmetros nominais de segurança cibernética."
+            },
+            weather: {
+                titulo: "☀️ Clima Espacial Avançado (NOAA)",
+                texto: "<b>Condição Atual do Vento Solar:</b> Estável a 410 km/s.<br><br>• <b>Índice Kp:</b> 2.3 (Atividade Geomagnética Calma).<br>• <b>Ejeções de Massa Coronal (CME):</b> Nenhuma frente de impacto direcionada à Terra nas últimas 48 horas.<br>• <b>Impacto em Satélites:</b> Baixo risco de degradação de sinal nas órbitas baixas."
+            },
+            lua: {
+                titulo: "🌕 Astronomia: Sistema Terra-Lua",
+                texto: "<b>Parâmetros Orbitais Atuais:</b><br><br>• <b>Fase Lunar:</b> Crescente (68% de iluminação visível do território brasileiro).<br>• <b>Distância Geocêntrica:</b> 384.400 km.<br>• <b>Marés Gravitacionais:</b> Nível moderado de influência oceânica.<br>• <b>Próxima Lua Cheia:</b> Daqui a 6 dias."
+            },
+            planetas: {
+                titulo: "🔭 Mapeamento de Planetas Visíveis",
+                texto: "<b>Posicionamento para Observadores no Brasil:</b><br><br>• ✨ <b>Vênus:</b> Brilho intenso a Oeste logo após o ocaso solar.<br>• 🪐 <b>Júpiter:</b> Ascendendo a Leste por volta das 22h.<br>• 🔴 <b>Marte:</b> Visível no horizonte leste nas primeiras horas da madrugada.<br>• <i>Condição atmosférica recomendada:</i> Céu limpo sem nebulosidade densa."
+            },
+            lixo: {
+                titulo: "🛰️ Monitoramento de Lixo Espacial & Reentradas",
+                texto: "<b>Setor América do Sul / Brasil (ATL-BR):</b><br><br>• ⚠️ <b>Detritos Inativos:</b> 3 objetos sob rastreamento passivo da CelesTrak.<br>• 🔥 <b>Previsão de Reentrada:</b> Nenhuma carcaça ou estágio de foguete com rota de reentrada sobre solo brasileiro hoje.<br>• <b>Segurança de Estações:</b> Perímetros de solo blindados contra varreduras não autorizadas."
+            }
+        };
+
+        function abrirDetalhes(modulo) {
+            const modal = document.getElementById('modalDetalhes');
+            const titulo = document.getElementById('modalTitulo');
+            const texto = document.getElementById('modalTexto');
+
+            if (dadosModulos[modulo]) {
+                titulo.innerHTML = dadosModulos[modulo].titulo;
+                texto.innerHTML = dadosModulos[modulo].texto;
+                modal.style.display = 'flex';
+            }
+        }
+
+        function fecharDetalhes() {
+            document.getElementById('modalDetalhes').style.display = 'none';
+        }
+
+        // Fechar modal clicando fora da caixa
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalDetalhes');
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        }
     </script>
 </body>
 </html>
