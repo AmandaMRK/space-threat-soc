@@ -5,22 +5,103 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AstroGuard SOC Completo</title>
     <style>
-        :root { --bg: #050b14; --card: rgba(13, 25, 45, 0.95); --cyan: #00f3ff; --text: #e2e8f0; --border: #1e3a5f; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; padding: 15px; margin: 0; }
-        .header { text-align: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 15px; }
-        .header h1 { color: var(--cyan); margin: 0; font-size: 1.5rem; text-transform: uppercase; letter-spacing: 2px; }
-        
-        .grid-kpi { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 10px; margin-bottom: 20px; }
-        .kpi-card { background: var(--card); border: 1px solid var(--border); padding: 10px; border-radius: 8px; text-align: center; }
-        
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; }
-        .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 15px; margin-bottom: 15px; }
-        .card-title { color: var(--cyan); font-weight: bold; font-size: 0.85rem; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
-        .badge { background: #10b981; color: white; padding: 2px 8px; border-radius: 6px; font-size: 0.7rem; }
-        
-        .orbital-box { height: 140px; background: #0a1628; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; }
-        .btn-telegram { background: #0088cc; color: white; padding: 15px; border-radius: 10px; text-align: center; text-decoration: none; display: block; font-weight: bold; margin-top: 20px; border: 2px solid #005a8d; }
-        pre { background: #020617; padding: 10px; border-radius: 5px; color: var(--cyan); font-size: 0.75rem; overflow-x: auto; }
+        :root { 
+            --bg: #050b14; 
+            --card: rgba(13, 25, 45, 0.95); 
+            --cyan: #00f3ff; 
+            --text: #e2e8f0; 
+            --border: #1e3a5f; 
+        }
+        body { 
+            background-color: var(--bg); 
+            color: var(--text); 
+            font-family: 'Segoe UI', sans-serif; 
+            padding: 15px; 
+            margin: 0; 
+        }
+        .header { 
+            text-align: center; 
+            margin-bottom: 20px; 
+            border-bottom: 1px solid var(--border); 
+            padding-bottom: 15px; 
+        }
+        .header h1 { 
+            color: var(--cyan); 
+            margin: 0; 
+            font-size: 1.5rem; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+        }
+        .grid-kpi { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); 
+            gap: 10px; 
+            margin-bottom: 20px; 
+        }
+        .kpi-card { 
+            background: var(--card); 
+            border: 1px solid var(--border); 
+            padding: 10px; 
+            border-radius: 8px; 
+            text-align: center; 
+        }
+        .dashboard-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+            gap: 15px; 
+        }
+        .card { 
+            background: var(--card); 
+            border: 1px solid var(--border); 
+            border-radius: 12px; 
+            padding: 15px; 
+            margin-bottom: 15px; 
+        }
+        .card-title { 
+            color: var(--cyan); 
+            font-weight: bold; 
+            font-size: 0.85rem; 
+            margin-bottom: 10px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+        }
+        .badge { 
+            background: #10b981; 
+            color: white; 
+            padding: 2px 8px; 
+            border-radius: 6px; 
+            font-size: 0.7rem; 
+        }
+        .orbital-box { 
+            height: 140px; 
+            background: #0a1628; 
+            border-radius: 8px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            position: relative; 
+        }
+        .btn-telegram { 
+            background: #0088cc; 
+            color: white; 
+            padding: 15px; 
+            border-radius: 10px; 
+            text-align: center; 
+            text-decoration: none; 
+            display: block; 
+            font-weight: bold; 
+            margin-top: 20px; 
+            border: 2px solid #005a8d; 
+        }
+        pre { 
+            background: #020617; 
+            padding: 10px; 
+            border-radius: 5px; 
+            color: var(--cyan); 
+            font-size: 0.75rem; 
+            overflow-x: auto; 
+        }
     </style>
 </head>
 <body>
@@ -32,17 +113,31 @@
 
     <!-- KPIs DE TOPO -->
     <div class="grid-kpi">
-        <div class="kpi-card"><div style="font-size:0.6rem; color:#94a3b8;">THREAT LEVEL</div><div style="color:#facc15; font-weight:bold;">MODERATE</div></div>
-        <div class="kpi-card"><div style="font-size:0.6rem; color:#94a3b8;">EVENTOS (24H)</div><div style="font-weight:bold;">42</div></div>
-        <div class="kpi-card"><div style="font-size:0.6rem; color:#94a3b8;">OBJETOS LEO</div><div style="font-weight:bold;">1,482</div></div>
-        <div class="kpi-card"><div style="font-size:0.6rem; color:#94a3b8;">CONJUNÇÕES</div><div style="font-weight:bold;">3</div></div>
+        <div class="kpi-card">
+            <div style="font-size:0.6rem; color:#94a3b8;">THREAT LEVEL</div>
+            <div style="color:#facc15; font-weight:bold;">MODERATE</div>
+        </div>
+        <div class="kpi-card">
+            <div style="font-size:0.6rem; color:#94a3b8;">EVENTOS (24H)</div>
+            <div style="font-weight:bold;">42</div>
+        </div>
+        <div class="kpi-card">
+            <div style="font-size:0.6rem; color:#94a3b8;">OBJETOS LEO</div>
+            <div style="font-weight:bold;">1,482</div>
+        </div>
+        <div class="kpi-card">
+            <div style="font-size:0.6rem; color:#94a3b8;">CONJUNÇÕES</div>
+            <div style="font-weight:bold;">3</div>
+        </div>
     </div>
 
     <div class="dashboard-grid">
         <!-- NOVOS MÓDULOS AVANÇADOS -->
         <div class="card">
             <div class="card-title">ORBITAL MONITOR (LEO TRACKER)</div>
-            <div class="orbital-box"><div style="width:50px;height:50px; background: radial-gradient(#38bdf8, #0284c7); border-radius:50%; box-shadow: 0 0 12px #38bdf8;"></div></div>
+            <div class="orbital-box">
+                <div style="width:50px;height:50px; background: radial-gradient(#38bdf8, #0284c7); border-radius:50%; box-shadow: 0 0 12px #38bdf8;"></div>
+            </div>
         </div>
         
         <div class="card">
@@ -64,20 +159,67 @@
         </div>
 
         <!-- TODOS OS CARDS ORIGINAIS -->
-        <div class="card"><div class="card-title">Status da Operação <span class="badge">NOMINAL</span></div><div style="font-size:0.85rem;">Eventos (24h): 02 | Objetos LEO: 1,420</div></div>
-        <div class="card"><div class="card-title">NEO Feed (NASA JPL) <span class="badge">ONLINE</span></div><div style="font-size:0.85rem;">3 asteróides monitorados hoje pela NASA JPL.</div></div>
-        <div class="card"><div class="card-title">Timeline & Histórico <span class="badge" style="background:#00f3ff; color:#000;">REGISTRO</span></div><div style="font-size:0.85rem;">Cronologia de eventos e varreduras das últimas 24h.</div></div>
-        <div class="card"><div class="card-title">AI Briefing <span class="badge" style="background:#a855f7;">ATIVO</span></div><div style="font-size:0.85rem;">Resumo executivo do Analista SOC Sênior.</div></div>
-        <div class="card"><div class="card-title">Space Weather (NOAA) <span class="badge">ONLINE</span></div><div style="font-size:0.85rem;">Atividade Solar: Estável | Índice Kp: 2.3</div></div>
-        <div class="card"><div class="card-title">Radiação Orbital <span class="badge" style="background:#10b981;">SEGURO</span></div><div style="font-size:0.85rem;">Cinturão de Van Allen: Nível estável para satélites.</div></div>
-        <div class="card"><div class="card-title">Satélites & Órbitas <span class="badge">ESTÁVEL</span></div><div style="font-size:0.85rem;">Constelações LEO: Tráfego nominal sobre o setor brasileiro.</div></div>
-        <div class="card"><div class="card-title">Cibersegurança <span class="badge" style="background:#10b981;">BLINDADO</span></div><div style="font-size:0.85rem;">Criptografia C2: AES-256 Ativa. Zero intrusões.</div></div>
-        <div class="card"><div class="card-title">Fase Lunar & Terra</div><div style="font-size:0.85rem;">Lua Crescente Iluminada (68%). Distância: 384.400 km.</div></div>
-        <div class="card"><div class="card-title">Planetas Hoje</div><div style="font-size:0.85rem;">Vênus: Oeste (Pôr do sol) | Júpiter: Leste (Madrugada).</div></div>
-        <div class="card"><div class="card-title">Reentradas / Lixo <span class="badge" style="background:#f59e0b;">ATENÇÃO</span></div><div style="font-size:0.85rem;">Monitoramento de reentrada sobre o espaço aéreo do Brasil.</div></div>
-        <div class="card"><div class="card-title">Terminal Ao Vivo</div><pre>[21:21:00] SYSTEM .... ONLINE
+        <div class="card">
+            <div class="card-title">Status da Operação <span class="badge">NOMINAL</span></div>
+            <div style="font-size:0.85rem;">Eventos (24h): 02 | Objetos LEO: 1,420</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">NEO Feed (NASA JPL) <span class="badge">ONLINE</span></div>
+            <div style="font-size:0.85rem;">3 asteróides monitorados hoje pela NASA JPL.</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Timeline & Histórico <span class="badge" style="background:#00f3ff; color:#000;">REGISTRO</span></div>
+            <div style="font-size:0.85rem;">Cronologia de eventos e varreduras das últimas 24h.</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">AI Briefing <span class="badge" style="background:#a855f7;">ATIVO</span></div>
+            <div style="font-size:0.85rem;">Resumo executivo do Analista SOC Sênior.</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Space Weather (NOAA) <span class="badge">ONLINE</span></div>
+            <div style="font-size:0.85rem;">Atividade Solar: Estável | Índice Kp: 2.3</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Radiação Orbital <span class="badge" style="background:#10b981;">SEGURO</span></div>
+            <div style="font-size:0.85rem;">Cinturão de Van Allen: Nível estável para satélites.</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Satélites & Órbitas <span class="badge">ESTÁVEL</span></div>
+            <div style="font-size:0.85rem;">Constelações LEO: Tráfego nominal sobre o setor brasileiro.</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Cibersegurança <span class="badge" style="background:#10b981;">BLINDADO</span></div>
+            <div style="font-size:0.85rem;">Criptografia C2: AES-256 Ativa. Zero intrusões.</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Fase Lunar & Terra</div>
+            <div style="font-size:0.85rem;">Lua Crescente Iluminada (68%). Distância: 384.400 km.</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Planetas Hoje</div>
+            <div style="font-size:0.85rem;">Vênus: Oeste (Pôr do sol) | Júpiter: Leste (Madrugada).</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Reentradas / Lixo <span class="badge" style="background:#f59e0b;">ATENÇÃO</span></div>
+            <div style="font-size:0.85rem;">Monitoramento de reentrada sobre o espaço aéreo do Brasil.</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Terminal Ao Vivo</div>
+            <pre>[21:21:00] SYSTEM .... ONLINE
 [21:21:05] NEO FEED .. SYNC
-[21:21:10] FIREWALL .. SECURE</pre></div>
+[21:21:10] FIREWALL .. SECURE</pre>
+        </div>
     </div>
 
     <!-- BOTÃO OFICIAL DO TELEGRAM -->
