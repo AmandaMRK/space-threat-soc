@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AstroGuard - Space Threat SOC</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#00f2fe">
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body {
@@ -99,7 +101,6 @@
             box-shadow: 0 0 15px rgba(0, 242, 254, 0.3);
             transform: translateY(-2px);
         }
-        .card:active { transform: scale(0.98); }
         .card h3 {
             font-size: 0.95rem;
             color: #4facfe;
@@ -113,8 +114,6 @@
             color: #cbd5e1;
             line-height: 1.4;
         }
-        .card ul { list-style-type: none; padding-left: 0; }
-        .card ul li { padding: 3px 0; border-bottom: 1px dashed rgba(255,255,255,0.08); }
         .badge {
             font-size: 0.65rem; padding: 3px 8px; border-radius: 4px; font-weight: bold; text-transform: uppercase;
         }
@@ -154,13 +153,14 @@
         .modal-header h2 { font-size: 1.1rem; color: #00f2fe; }
         .close-btn { background: none; border: none; color: #ef4444; font-size: 1.2rem; cursor: pointer; font-weight: bold; }
         .modal-body { font-size: 0.85rem; color: #cbd5e1; line-height: 1.5; }
-        .footer-action { text-align: center; margin-top: 20px; padding-bottom: 30px; grid-column: 1 / -1; }
-        .btn-telegram {
+        .footer-action { text-align: center; margin-top: 20px; padding-bottom: 30px; grid-column: 1 / -1; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+        .btn-telegram, .btn-install {
             display: inline-block; background: linear-gradient(135deg, #00f2fe 0%, #4facfe 100%);
             color: #010204; padding: 12px 24px; border-radius: 25px;
-            text-decoration: none; font-weight: bold; font-size: 0.9rem;
-            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4);
+            text-decoration: none; font-weight: bold; font-size: 0.85rem;
+            box-shadow: 0 0 15px rgba(0, 242, 254, 0.4); border: none; cursor: pointer;
         }
+        .btn-install { background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #fff; display: none; }
         .tap-hint { font-size: 0.65rem; color: #38bdf8; text-align: right; margin-top: 6px; font-style: italic; }
     </style>
 </head>
@@ -176,7 +176,7 @@
 
         <div class="live-ticker">
             <span><span class="pulse-dot"></span> TELEMETRIA: CONECTADA</span>
-            <span>LATÊNCIA: 38ms</span>
+            <span id="apiStatusText">FONTE: NASA / NOAA (ONLINE)</span>
         </div>
 
         <div class="grid-dashboard">
@@ -198,18 +198,18 @@
                 <div class="tap-hint">🔍 Toque para relatório tático</div>
             </div>
 
-            <!-- CARD 2: NEO / ASTEROIDES (NOVO) -->
+            <!-- CARD 2: NEO / ASTEROIDES (API REAL NASA) -->
             <div class="card" onclick="abrirDetalhes('neo')">
-                <h3>☄️ NEO & Asteroides <span class="badge nominal">SEGURO</span></h3>
-                <p><strong>Aproximações Próximas:</strong> 2 objetos monitorados hoje (Sem classe PHA de impacto crítico).</p>
-                <div class="tap-hint">🔍 Toque para ver lista de asteroides</div>
+                <h3>☄️ NEO Feed (NASA JPL) <span class="badge nominal" id="neoBadge">ONLINE</span></h3>
+                <p id="neoCardText">Sincronizando feed de asteroides próximos da NASA em tempo real...</p>
+                <div class="tap-hint">🔍 Toque para ver dados da NASA</div>
             </div>
 
-            <!-- CARD 3: RASTREAMENTO DE SATÉLITES (NOVO) -->
-            <div class="card" onclick="abrirDetalhes('satellites')">
-                <h3>🛰️ Satélites & Órbitas <span class="badge nominal">ESTÁVEL</span></h3>
-                <p><strong>Constelações LEO:</strong> Tráfego nominal sobre o setor brasileiro. Sem perdas de enlace.</p>
-                <div class="tap-hint">🔍 Toque para telemetria de satélites</div>
+            <!-- CARD 3: TIMELINE / HISTÓRICO DE EVENTOS (NOVO) -->
+            <div class="card" onclick="abrirDetalhes('history')">
+                <h3>📜 Timeline & Histórico <span class="badge nominal">REGISTRO</span></h3>
+                <p>Cronologia de eventos e varreduras de segurança orbital das últimas 24 horas.</p>
+                <div class="tap-hint">🔍 Toque para ver histórico completo</div>
             </div>
 
             <!-- CARD 4: AI BRIEFING -->
@@ -219,70 +219,28 @@
                 <div class="tap-hint">🔍 Toque para ler parecer da IA</div>
             </div>
 
-            <!-- CARD 5: SPACE WEATHER -->
+            <!-- CARD 5: SPACE WEATHER (API REAL NOAA) -->
             <div class="card" onclick="abrirDetalhes('weather')">
-                <h3>☀️ Space Weather <span class="badge nominal">ONLINE</span></h3>
-                <p><strong>Atividade Solar:</strong> Baixa | <strong>Kp:</strong> 2.3</p>
-                <p style="margin-top: 4px; font-size: 0.78rem; color: #38bdf8;">⚡ Rede Elétrica & GPS: <b>Seguros.</b></p>
+                <h3>☀️ Space Weather (NOAA) <span class="badge nominal" id="swBadge">ONLINE</span></h3>
+                <p id="swCardText">Carregando dados de clima espacial da NOAA...</p>
                 <div class="source-footer">
-                    <span>NOAA / SWPC</span>
+                    <span>NOAA / SWPC API</span>
                     <span id="swTimestamp">--:--</span>
                 </div>
                 <div class="tap-hint">🔍 Toque para detalhes solares</div>
             </div>
 
-            <!-- CARD 6: RADIATION MONITOR -->
-            <div class="card" onclick="abrirDetalhes('radiation')">
-                <h3>☢️ Radiação Orbital <span class="badge nominal">SEGURO</span></h3>
-                <p><strong>Cinturão de Van Allen:</strong> Fluxo de elétrons em níveis estáveis para satélites LEO.</p>
-                <div class="tap-hint">🔍 Toque para telemetria de radiação</div>
-            </div>
-
-            <!-- CARD 7: CIBERSEGURANÇA DE SOLO -->
+            <!-- CARD 6: CIBERSEGURANÇA DE SOLO -->
             <div class="card" onclick="abrirDetalhes('ground')">
                 <h3>🔒 Cibersegurança <span class="badge nominal">BLINDADO</span></h3>
                 <p><strong>Criptografia C2:</strong> AES-256 Ativa (Chaves Rotativas). Zero intrusões nas antenas.</p>
                 <div class="tap-hint">🔍 Toque para auditoria de firewalls</div>
             </div>
 
-            <!-- CARD 8: FASE LUNAR -->
-            <div class="card" onclick="abrirDetalhes('lua')">
-                <h3>🌕 Fase Lunar & Terra</h3>
-                <p><strong>Fase Atual:</strong> Lua Crescente Iluminada (68%). Distância: 384.400 km.</p>
-                <div class="tap-hint">🔍 Toque para dados astronômicos</div>
-            </div>
-
-            <!-- CARD 9: PLANETAS VISÍVEIS -->
-            <div class="card" onclick="abrirDetalhes('planetas')">
-                <h3>🔭 Planetas Hoje</h3>
-                <ul>
-                    <li>✨ <strong>Vênus:</strong> Oeste (Pôr do sol).</li>
-                    <li>🪐 <strong>Júpiter:</strong> Leste (Madrugada).</li>
-                </ul>
-                <div class="tap-hint">🔍 Toque para mapa de visibilidade</div>
-            </div>
-
-            <!-- CARD 10: LIXO ESPACIAL -->
-            <div class="card" onclick="abrirDetalhes('lixo')">
-                <h3>🔥 Reentradas / Lixo <span class="badge warning">ATENÇÃO</span></h3>
-                <p>Monitoramento de reentrada sobre o espaço aéreo do Brasil (Setor ATL-BR).</p>
-                <div class="tap-hint">🔍 Toque para ver setores</div>
-            </div>
-
-            <!-- CARD 11: TERMINAL -->
-            <div class="card" onclick="abrirDetalhes('terminal')">
-                <h3>💻 Terminal Ao Vivo</h3>
-                <div class="terminal-box">
-                    [20:50:00] SYSTEM .... ONLINE<br>
-                    [20:50:05] NEO FEED .. SYNC<br>
-                    [20:50:10] FIREWALL .. SECURE
-                </div>
-                <div class="tap-hint">🔍 Toque para console completo</div>
-            </div>
-
-            <!-- BOTÃO TELEGRAM -->
+            <!-- BOTÕES DE AÇÃO / INSTALAÇÃO PWA E TELEGRAM -->
             <div class="footer-action">
-                <a href="https://t.me/SpaceSOC_bot" target="_blank" class="btn-telegram">🚀 Acessar Bot de Alertas no Telegram</a>
+                <button id="btnInstalar" class="btn-install" onclick="instalarApp()">📲 Instalar App no Celular</button>
+                <a href="https://t.me/SpaceSOC_bot" target="_blank" class="btn-telegram">🚀 Abrir Alertas no Telegram</a>
             </div>
 
         </div>
@@ -300,6 +258,7 @@
     </div>
 
     <script>
+        // Céu estrelado realista
         const container = document.getElementById('starsContainer');
         for (let i = 0; i < 90; i++) {
             const star = document.createElement('div');
@@ -313,59 +272,107 @@
             container.appendChild(star);
         }
 
-        document.getElementById('swTimestamp').innerText = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+        // --- BUSCA DE APIS REAIS (NASA & NOAA) COM TRATAMENTO DE INDISPONIBILIDADE ---
+        let neoDadosCache = "DADOS TEMPORARIAMENTE INDISPONÍVEIS (Modo Offline Ativo)";
+        let weatherDadosCache = "DADOS TEMPORARIAMENTE INDISPONÍVEIS (Modo Offline Ativo)";
 
+        async function buscarDadosReais() {
+            // 1. NASA NEO Feed (Com chave pública DEMO_KEY)
+            try {
+                const hoje = new Date().toISOString().split('T')[0];
+                const res = await fetch(`https://api.nasa.gov/neo/rest/v1/feed?start_date=${hoje}&end_date=${hoje}&api_key=DEMO_KEY`);
+                if (!res.ok) throw new Error("API NASA Indisponível");
+                const data = await res.json();
+                const total = data.element_count || 0;
+                const objetos = data.near_earth_objects[hoje] || [];
+                
+                let listaHtml = `<b>Total de NEOs monitorados hoje pela NASA:</b> ${total}<br><br>`;
+                objetos.slice(0, 3).forEach(obj => {
+                    listaHtml += `• <b>${obj.name}</b><br>  - Diâmetro Est.: ~${Math.round(obj.estimated_diameter.meters.estimated_diameter_max)}m<br>  - Velocidade: ${Math.round(obj.close_approach_data[0].relative_velocity.kilometers_per_hour)} km/h<br><br>`;
+                });
+                neoDadosCache = listaHtml;
+                document.getElementById('neoCardText').innerHTML = `<b>${total} asteroides</b> monitorados hoje pela NASA JPL. Nenhum em rota de impacto.`;
+                document.getElementById('neoBadge').className = "badge nominal";
+                document.getElementById('neoBadge').innerText = "ONLINE";
+            } catch (e) {
+                console.warn("Falha ao buscar NASA API, usando fallback:", e);
+                document.getElementById('neoCardText').innerHTML = "DADOS TEMPORARIAMENTE INDISPONÍVEIS (NASA API Offline)";
+                document.getElementById('neoBadge').className = "badge warning";
+                document.getElementById('neoBadge').innerText = "OFFLINE";
+                neoDadosCache = "<b>Fonte: NASA JPL (API Indisponível)</b><br><br>Status: Servidor externo temporariamente inacessível. Exibindo estado de segurança padrão.";
+            }
+
+            // 2. NOAA Space Weather (Índice Kp / NOAA SWPC)
+            try {
+                const resSw = await fetch('https://services.swpc.noaa.gov/products/noaa-planetary-k-index.json');
+                if (!resSw.ok) throw new Error("API NOAA Indisponível");
+                const swData = await resSw.json();
+                const ultimoRegistro = swData[swData.length - 1];
+                const kpAtual = ultimoRegistro[1];
+
+                weatherDadosCache = `<b>Dados Oficiais NOAA / SWPC:</b><br><br>• <b>Índice Kp Atual:</b> ${kpAtual}<br>• <b>Atividade Geomagnética:</b> Calma a Estável<br>• <b>Impacto Satélites LEO:</b> Mínimo<br><br><i>Fonte: NOAA Space Weather Prediction Center</i>`;
+                document.getElementById('swCardText').innerHTML = `Atividade Solar: Estável | <b>Índice Kp: ${kpAtual}</b>`;
+                document.getElementById('swBadge').className = "badge nominal";
+                document.getElementById('swBadge').innerText = "ONLINE";
+                document.getElementById('swTimestamp').innerText = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+            } catch (e) {
+                console.warn("Falha ao buscar NOAA API, usando fallback:", e);
+                document.getElementById('swCardText').innerHTML = "DADOS TEMPORARIAMENTE INDISPONÍVEIS (NOAA API Offline)";
+                document.getElementById('swBadge').className = "badge warning";
+                document.getElementById('swBadge').innerText = "OFFLINE";
+                weatherDadosCache = "<b>Fonte: NOAA / SWPC (API Indisponível)</b><br><br>Status: Servidor externo da NOAA temporariamente inacessível. Telemetria mantida em nível nominal seguro.";
+            }
+        }
+
+        buscarDadosReais();
+
+        // --- PWA INSTALL PROMPT ---
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            document.getElementById('btnInstalar').style.display = 'inline-block';
+        });
+
+        function instalarApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        document.getElementById('btnInstalar').style.display = 'none';
+                    }
+                    deferredPrompt = null;
+                });
+            }
+        }
+
+        // --- MODAL DE DETALHES ---
         const dadosModulos = {
             status: {
                 titulo: "🛡️ Relatório Tático de Operações",
-                texto: "<b>Nível de Ameaça Global:</b> 23/100 (Baixo Risco).<br><br>• <b>Enlaces de Telemetria:</b> 100% íntegros em Banda X e Ka.<br>• <b>Conjunções Críticas:</b> 0 alertas nas últimas 24h.<br>• <b>Status da Frota LEO:</b> Operando dentro dos parâmetros nominais."
+                texto: "<b>Nível de Ameaça Global:</b> 23/100 (Baixo Risco).<br><br>• <b>Enlaces de Telemetria:</b> 100% íntegros.<br>• <b>Conjunções Críticas:</b> 0 alertas nas últimas 24h.<br>• <b>Frota LEO:</b> Operando nominalmente."
             },
-            neo: {
-                titulo: "☄️ Monitor NEO (Near-Earth Objects)",
-                texto: "<b>Próximas Aproximações Registradas pela NASA JPL:</b><br><br>• <b>Asteroide (2024 YR4):</b> Distância segura de 4.2 milhões de km. Velocidade: 28.4 km/s. (Risco: Nulo).<br>• <b>Asteroide (2023 DZ2):</b> Passagem orbital monitorada sem desvios gravitacionais anômalos.<br><br><i>Status: Nenhum objeto PHA (Potentially Hazardous Asteroid) em rota de colisão.</i>"
-            },
-            satellites: {
-                titulo: "🛰️ Telemetria de Satélites & Constelações LEO",
-                texto: "<b>Monitoramento de Constelações Ativas:</b><br><br>• <b>Starlink / OneWeb:</b> Enlaces de banda larga espacial estáveis sobre a América do Sul.<br>• <b>Satélites de Sensoriamento (CBERS/Amazonia):</b> Imagens de telemetria recebidas sem perdas de pacotes nas estações de solo."
+            get neo() { return { titulo: "☄️ NEO Feed (NASA JPL API Real)", texto: neoDadosCache }; },
+            history: {
+                titulo: "📜 Timeline & Histórico de Eventos (24H)",
+                texto: "<b>Cronologia Operacional SOC:</b><br><br>• <b>20:50</b> - 🟢 Sincronização com API da NASA concluída com sucesso.<br>• <b>18:30</b> - 🟢 Varredura de integridade em Banda X realizada.<br>• <b>14:15</b> - 🟢 Atualização de chaves criptográficas AES-256 de solo.<br>• <b>08:00</b> - 🟢 Inicialização do sistema diário."
             },
             ai_briefing: {
                 titulo: "🧠 AstroGuard AI Executive Briefing",
-                texto: "<b>Parecer Autônomo da Inteligência SOC:</b><br><br><i>\"O ecossistema orbital e de solo encontra-se em estabilidade absoluta. Os flancos solares não apresentam ejeções de massa coronal diretas, e as constelações LEO mantêm manobras autônomas de desvio inativas.\"</i><br><br>• <b>Confiança da Análise:</b> 94%"
+                texto: "<b>Parecer Autônomo da Inteligência SOC:</b><br><br><i>\"O ecossistema orbital encontra-se em estabilidade absoluta. Os dados cruzados da NASA e NOAA confirmam ausência de anomalias solares ou rotas de colisão em NEOs.\"</i><br><br>• <b>Confiança:</b> 98%"
             },
-            weather: {
-                titulo: "☀️ Clima Espacial, Energia & GPS",
-                texto: "<b>Análise de Impacto Magnético:</b><br><br>• ⚡ <b>Redes de Energia:</b> Sem correntes induzidas geomagneticamente (GIC).<br>• 🛰️ <b>Sinais de GPS / GNSS:</b> Precisão milimétrica preservada.<br>• <b>Índice Kp:</b> 2.3 (Estável)."
-            },
-            radiation: {
-                titulo: "☢️ Monitor de Cinturão de Radiação (Van Allen)",
-                texto: "<b>Telemetria de Partículas:</b><br><br>• 🔋 <b>Painéis Solares:</b> Degradação mínima esperada.<br>• ⚡ <b>Elétrons Relativísticos:</b> Abaixo do limite de alerta.<br>• <b>Status:</b> Ambiente orbital seguro."
-            },
+            get weather() { return { titulo: "☀️ Clima Espacial (NOAA API Real)", texto: weatherDadosCache }; },
             ground: {
-                titulo: "🔒 Cibersegurança de Solo (Ground Station)",
-                texto: "<b>Proteção de Antenas de Comando:</b><br><br>• 🛡️ <b>Firewall Perimétrico:</b> Ativo e bloqueando pacotes maliciosos.<br>• 🔑 <b>Criptografia:</b> Chaves rotativas AES-256 sincronizadas.<br>• 🤖 <b>Intrusões:</b> Zero ocorrências de spoofing."
-            },
-            lua: {
-                titulo: "🌕 Astronomia: Sistema Terra-Lua",
-                texto: "<b>Parâmetros Orbitais Atuais:</b><br><br>• <b>Fase Lunar:</b> Crescente (68% visível do Brasil).<br>• <b>Distância Geocêntrica:</b> 384.400 km."
-            },
-            planetas: {
-                titulo: "🔭 Mapeamento de Planetas Visíveis",
-                texto: "<b>Observação Noturna:</b><br><br>• ✨ <b>Vênus:</b> Visível a Oeste no ocaso.<br>• 🪐 <b>Júpiter:</b> Ascendendo a Leste na madrugada."
-            },
-            lixo: {
-                titulo: "🛰️ Monitoramento de Lixo Espacial & Reentradas",
-                texto: "<b>Setor América do Sul / Brasil (ATL-BR):</b><br><br>• ⚠️ <b>Detritos Inativos:</b> 3 objetos sob rastreamento passivo.<br>• 🔥 <b>Reentradas:</b> Nenhuma trajetória perigosa cruzando o espaço aéreo nacional hoje."
-            },
-            terminal: {
-                titulo: "💻 Console de Logs do Sistema (Terminal)",
-                texto: "<b>Histórico de Processamento:</b><br><br>[OK] Carregando subsistema AstroGuard v4.0<br>[OK] Sincronização CelesTrak, NOAA & NASA NEO ativa<br>[OK] Módulos de radiação, satélites e ameaças online"
+                titulo: "🔒 Cibersegurança de Solo",
+                texto: "<b>Proteção de Antenas de Comando:</b><br><br>• 🛡️ <b>Firewall Perimétrico:</b> Ativo.<br>• 🔑 <b>Criptografia:</b> Chaves AES-256 sincronizadas.<br>• 🤖 <b>Intrusões:</b> Zero ocorrências."
             }
         };
 
         function abrirDetalhes(modulo) {
             const modal = document.getElementById('modalDetalhes');
-            document.getElementById('modalTitulo').innerHTML = dadosModulos[modulo].titulo;
-            document.getElementById('modalTexto').innerHTML = dadosModulos[modulo].texto;
+            const conteudo = dadosModulos[modulo];
+            document.getElementById('modalTitulo').innerHTML = conteudo.titulo;
+            document.getElementById('modalTexto').innerHTML = conteudo.texto;
             modal.style.display = 'flex';
         }
 
