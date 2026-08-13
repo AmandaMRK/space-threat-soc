@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AstroGuard SOC Completo</title>
+    <title>AstroGuard SOC Interativo</title>
     <style>
         :root { 
             --bg: #050b14; 
@@ -55,7 +55,14 @@
             border: 1px solid var(--border); 
             border-radius: 12px; 
             padding: 15px; 
-            margin-bottom: 15px; 
+            cursor: pointer; 
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .card:hover { 
+            border-color: var(--cyan); 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 243, 255, 0.15);
         }
         .card-title { 
             color: var(--cyan); 
@@ -73,6 +80,8 @@
             border-radius: 6px; 
             font-size: 0.7rem; 
         }
+        
+        /* ORBITAL MONITOR ANIMADO */
         .orbital-box { 
             height: 140px; 
             background: #0a1628; 
@@ -81,7 +90,76 @@
             align-items: center; 
             justify-content: center; 
             position: relative; 
+            overflow: hidden;
         }
+        .earth { 
+            width: 45px; 
+            height: 45px; 
+            background: radial-gradient(circle, #38bdf8, #0284c7); 
+            border-radius: 50%; 
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.6); 
+            z-index: 2;
+        }
+        .orbit-path {
+            position: absolute;
+            border: 1px dashed rgba(0, 243, 255, 0.3);
+            border-radius: 50%;
+        }
+        .orbit-1 { width: 90px; height: 90px; }
+        .orbit-2 { width: 130px; height: 130px; }
+        
+        .sat {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--cyan);
+        }
+        .sat-1 { animation: spin1 4s linear infinite; }
+        .sat-2 { animation: spin2 7s linear infinite reverse; }
+
+        @keyframes spin1 {
+            from { transform: rotate(0deg) translateX(45px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(45px) rotate(-360deg); }
+        }
+        @keyframes spin2 {
+            from { transform: rotate(0deg) translateX(65px) rotate(0deg); }
+            to { transform: rotate(360deg) translateX(65px) rotate(-360deg); }
+        }
+
+        /* JANELA MODAL (POP-UP) */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(2, 6, 23, 0.85);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: #0d192d;
+            border: 2px solid var(--cyan);
+            padding: 20px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: 0 0 25px rgba(0, 243, 255, 0.3);
+        }
+        .modal-close {
+            background: var(--cyan);
+            color: var(--bg);
+            border: none;
+            padding: 8px 15px;
+            font-weight: bold;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+            float: right;
+        }
+
         .btn-telegram { 
             background: #0088cc; 
             color: white; 
@@ -101,6 +179,7 @@
             color: var(--cyan); 
             font-size: 0.75rem; 
             overflow-x: auto; 
+            margin: 0;
         }
     </style>
 </head>
@@ -132,89 +211,93 @@
     </div>
 
     <div class="dashboard-grid">
-        <!-- NOVOS MÓDULOS AVANÇADOS -->
-        <div class="card">
+        <!-- ORBITAL MONITOR ANIMADO -->
+        <div class="card" onclick="openModal('Orbital Monitor', 'Monitoramento ativo de constelações LEO. Satélites em rota nominal com varredura contínua de detritos espaciais em banda X.')">
             <div class="card-title">ORBITAL MONITOR (LEO TRACKER)</div>
             <div class="orbital-box">
-                <div style="width:50px;height:50px; background: radial-gradient(#38bdf8, #0284c7); border-radius:50%; box-shadow: 0 0 12px #38bdf8;"></div>
+                <div class="orbit-path orbit-1"></div>
+                <div class="orbit-path orbit-2"></div>
+                <div class="earth"></div>
+                <div class="sat sat-1" style="top: 50%; left: 50%;"></div>
+                <div class="sat sat-2" style="top: 50%; left: 50%;"></div>
             </div>
         </div>
         
-        <div class="card">
+        <div class="card" onclick="openModal('AI Briefing & CTI', 'Resumo Analítico: Tráfego espacial estável nas últimas 24 horas. Sem interferências geomagnéticas severas detectadas pelas estações de solo.')">
             <div class="card-title">AI BRIEFING & CTI SUMMARY</div>
             <div style="font-size: 0.8rem; line-height: 1.4; margin-bottom: 10px;">Resumo Executivo: Atividade solar estável com leve oscilação. Manter vigilância em painéis solares.</div>
-            <button style="width:100%; background:none; border:1px solid var(--cyan); color:var(--cyan); padding:8px; border-radius:4px; font-weight:bold; cursor:pointer;">GERAR NOVO BRIEFING</button>
+            <button style="width:100%; background:none; border:1px solid var(--cyan); color:var(--cyan); padding:8px; border-radius:4px; font-weight:bold; pointer-events:none;">GERAR NOVO BRIEFING</button>
         </div>
 
-        <div class="card">
+        <div class="card" onclick="openModal('Alertas Recentes', 'Detalhes dos incidentes: Conjunção LEO #8892 avaliada com risco moderado-baixo. Protocolo de desvio mantido em standby.')">
             <div class="card-title">ALERTAS RECENTES</div>
             <div style="font-size: 0.8rem; margin-bottom: 8px;"><strong>Conjunção LEO #8892:</strong> Aproximação a 1.2km de detrito.</div>
             <div style="font-size: 0.8rem;"><strong>Flutuação Geomagnética:</strong> Kp-index atingiu nível 4.</div>
         </div>
 
-        <div class="card">
+        <div class="card" onclick="openModal('Timeline Operacional', 'Log completo de telemetria e varreduras autônomas executadas pelo sistema central do SOC nas últimas horas.')">
             <div class="card-title">TIMELINE OPERACIONAL</div>
             <div style="font-size: 0.8rem; margin-bottom: 6px;"><span style="color:var(--cyan);">15:42 UTC</span> - Alerta de aproximação CelesTrak.</div>
             <div style="font-size: 0.8rem;"><span style="color:var(--cyan);">14:00 UTC</span> - Epemérides de satélites atualizadas.</div>
         </div>
 
-        <!-- TODOS OS CARDS ORIGINAIS -->
-        <div class="card">
+        <!-- CARDS ORIGINAIS COM MODAL -->
+        <div class="card" onclick="openModal('Status da Operação', 'Sistemas operando em capacidade plena. Sem falhas críticas de infraestrutura ou perda de pacotes de dados.')">
             <div class="card-title">Status da Operação <span class="badge">NOMINAL</span></div>
             <div style="font-size:0.85rem;">Eventos (24h): 02 | Objetos LEO: 1,420</div>
         </div>
 
-        <div class="card">
+        <div class="card" onclick="openModal('NEO Feed (NASA JPL)', 'Monitoramento de Near-Earth Objects ativo via API oficial da NASA. Nenhum asteroide em trajetória de colisão iminente.')">
             <div class="card-title">NEO Feed (NASA JPL) <span class="badge">ONLINE</span></div>
             <div style="font-size:0.85rem;">3 asteróides monitorados hoje pela NASA JPL.</div>
         </div>
 
-        <div class="card">
+        <div class="card" onclick="openModal('Timeline & Histórico', 'Histórico completo de varreduras orbitales guardado no banco de dados seguro do SOC.')">
             <div class="card-title">Timeline & Histórico <span class="badge" style="background:#00f3ff; color:#000;">REGISTRO</span></div>
             <div style="font-size:0.85rem;">Cronologia de eventos e varreduras das últimas 24h.</div>
         </div>
 
-        <div class="card">
+        <div class="card" onclick="openModal('AI Briefing', 'Módulo de inteligência artificial analítica dedicado à varredura preditiva de anomalias orbitais.')">
             <div class="card-title">AI Briefing <span class="badge" style="background:#a855f7;">ATIVO</span></div>
             <div style="font-size:0.85rem;">Resumo executivo do Analista SOC Sênior.</div>
         </div>
 
-        <div class="card">
+        <div class="card" onclick="openModal('Space Weather (NOAA)', 'Dados meteorológicos espaciais fornecidos pelo NOAA SWPC. Fluxo de prótons e vento solar sob controle.')">
             <div class="card-title">Space Weather (NOAA) <span class="badge">ONLINE</span></div>
             <div style="font-size:0.85rem;">Atividade Solar: Estável | Índice Kp: 2.3</div>
         </div>
 
-        <div class="card">
+        <div class="card" onclick="openModal('Radiação Orbital', 'Leituras do Cinturão de Van Allen em tempo real. Blindagem de satélites operando dentro dos parâmetros de segurança.')">
             <div class="card-title">Radiação Orbital <span class="badge" style="background:#10b981;">SEGURO</span></div>
             <div style="font-size:0.85rem;">Cinturão de Van Allen: Nível estável para satélites.</div>
         </div>
 
-        <div class="card">
+        <div class="card" onclick="openModal('Satélites & Órbitas', 'Telemetria dedicada ao setor aeroespacial brasileiro e constelações em baixa órbita terrestre.')">
             <div class="card-title">Satélites & Órbitas <span class="badge">ESTÁVEL</span></div>
             <div style="font-size:0.85rem;">Constelações LEO: Tráfego nominal sobre o setor brasileiro.</div>
         </div>
 
-        <div class="card">
+        <div class="card" onclick="openModal('Cibersegurança SOC', 'Firewall ativo com criptografia avançada AES-256 e detecção de intrusão baseada em IA.')">
             <div class="card-title">Cibersegurança <span class="badge" style="background:#10b981;">BLINDADO</span></div>
             <div style="font-size:0.85rem;">Criptografia C2: AES-256 Ativa. Zero intrusões.</div>
         </div>
 
-        <div class="card">
+        <div class="card" onclick="openModal('Fase Lunar & Terra', 'Posicionamento astronômico relativo e iluminação atual da superfície lunar para cálculo de reflexão solar.')">
             <div class="card-title">Fase Lunar & Terra</div>
             <div style="font-size:0.85rem;">Lua Crescente Iluminada (68%). Distância: 384.400 km.</div>
         </div>
 
-        <div class="card">
+        <div class="card" onclick="openModal('Planetas Hoje', 'Efemérides planetárias visíveis no horizonte tático do observatório.')">
             <div class="card-title">Planetas Hoje</div>
             <div style="font-size:0.85rem;">Vênus: Oeste (Pôr do sol) | Júpiter: Leste (Madrugada).</div>
         </div>
 
-        <div class="card">
+        <div class="card" onclick="openModal('Reentradas / Lixo Espacial', 'Varredura de detritos catalogados com reentrada atmosférica prevista no setor ATL-BR.')">
             <div class="card-title">Reentradas / Lixo <span class="badge" style="background:#f59e0b;">ATENÇÃO</span></div>
             <div style="font-size:0.85rem;">Monitoramento de reentrada sobre o espaço aéreo do Brasil.</div>
         </div>
 
-        <div class="card">
+        <div class="card" onclick="openModal('Terminal Ao Vivo', 'Console de comandos e auditoria do sistema central.')">
             <div class="card-title">Terminal Ao Vivo</div>
             <pre>[21:21:00] SYSTEM .... ONLINE
 [21:21:05] NEO FEED .. SYNC
@@ -224,6 +307,29 @@
 
     <!-- BOTÃO OFICIAL DO TELEGRAM -->
     <a href="https://t.me/SpaceSOC_bot" class="btn-telegram">🚀 Abrir Alertas no Telegram</a>
+
+    <!-- JANELA MODAL (POP-UP) INFORMATIVA -->
+    <div id="customModal" class="modal-overlay" onclick="closeModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3 id="modalTitle" style="color: var(--cyan); margin-top: 0; margin-bottom: 10px;">Título</h3>
+            <p id="modalText" style="font-size: 0.9rem; line-height: 1.5; color: var(--text);">Detalhes táticos aqui...</p>
+            <button class="modal-close" onclick="closeModalForce()">FECHAR</button>
+        </div>
+    </div>
+
+    <script>
+        function openModal(title, text) {
+            document.getElementById('modalTitle').innerText = title;
+            document.getElementById('modalText').innerText = text;
+            document.getElementById('customModal').style.display = 'flex';
+        }
+        function closeModal(event) {
+            document.getElementById('customModal').style.display = 'none';
+        }
+        function closeModalForce() {
+            document.getElementById('customModal').style.display = 'none';
+        }
+    </script>
 
 </body>
 </html>
