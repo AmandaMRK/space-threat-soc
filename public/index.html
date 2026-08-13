@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AstroGuard SOC - Space Threat Intelligence</title>
+    <title>AstroGuard - Space Threat SOC</title>
     <style>
         :root {
             --bg-deep: #050b14;
-            --bg-card: rgba(13, 25, 45, 0.7);
+            --bg-card: rgba(13, 25, 45, 0.75);
             --border-color: rgba(0, 243, 255, 0.2);
             --primary-cyan: #00f3ff;
             --text-main: #e2e8f0;
             --text-muted: #94a3b8;
-            --accent-glow: rgba(0, 243, 255, 0.15);
-            
             --sev-low: #38bdf8;
             --sev-med: #facc15;
             --sev-high: #fb923c;
@@ -31,38 +29,37 @@
             background-color: var(--bg-deep);
             color: var(--text-main);
             min-height: 100vh;
-            padding: 16px;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 243, 255, 0.03) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(56, 189, 248, 0.03) 0%, transparent 40%);
+            padding: 20px;
+            background-image: radial-gradient(circle at 50% 20%, #0b1026 0%, #040612 50%, #010204 100%);
         }
 
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+            text-align: center;
+            margin-bottom: 24px;
             border-bottom: 1px solid var(--border-color);
-            padding-bottom: 12px;
+            padding-bottom: 16px;
         }
 
-        .logo-area h1 {
-            font-size: 1.25rem;
-            letter-spacing: 1px;
+        header h1 {
+            font-size: 1.5rem;
+            letter-spacing: 2px;
             color: var(--primary-cyan);
             text-transform: uppercase;
+            margin-bottom: 4px;
         }
 
-        .logo-area p {
-            font-size: 0.75rem;
+        header p {
+            font-size: 0.8rem;
             color: var(--text-muted);
+            letter-spacing: 0.5px;
         }
 
-        /* Status & Connection Tickers */
+        /* Status Bar / Conexões individuais */
         .status-bar {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
+            justify-content: center;
             margin-bottom: 20px;
         }
 
@@ -92,10 +89,40 @@
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
 
-        /* Responsive Grid System */
+        /* KPIs Compactos */
+        .kpi-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .kpi-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 12px;
+            border-radius: 8px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .kpi-value {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #fff;
+            margin-top: 4px;
+        }
+
+        .kpi-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        /* Grid de Cards Responsiva */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 16px;
         }
 
@@ -103,15 +130,14 @@
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 10px;
-            padding: 16px;
+            padding: 18px;
             backdrop-filter: blur(10px);
-            animation: fadeIn 0.5s ease-out;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .card:hover {
+            border-color: rgba(0, 243, 255, 0.4);
         }
 
         .card-title {
@@ -125,35 +151,47 @@
             align-items: center;
         }
 
-        /* 1. KPIs Compactos */
-        .kpi-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-
-        .kpi-box {
-            background: rgba(5, 11, 20, 0.5);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 10px;
+        /* Orbital Monitor Visual */
+        .orbital-canvas-container {
+            position: relative;
+            height: 160px;
+            background: radial-gradient(circle, #091a2a 0%, #03070d 100%);
             border-radius: 6px;
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px solid rgba(0, 243, 255, 0.1);
         }
 
-        .kpi-value {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #fff;
-            margin-top: 4px;
+        .earth-core {
+            width: 50px;
+            height: 50px;
+            background: radial-gradient(circle, #38bdf8 0%, #0284c7 70%, #0369a1 100%);
+            border-radius: 50%;
+            box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+            position: relative;
         }
 
-        .kpi-label {
-            font-size: 0.7rem;
-            color: var(--text-muted);
+        .orbit-ring {
+            position: absolute;
+            border: 1px dashed rgba(0, 243, 255, 0.2);
+            border-radius: 50%;
         }
 
-        /* Modules Styling */
+        .orbit-1 { width: 95px; height: 95px; }
+        .orbit-2 { width: 140px; height: 140px; }
+
+        .satellite-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--primary-cyan);
+            border-radius: 50%;
+            position: absolute;
+            box-shadow: 0 0 6px var(--primary-cyan);
+        }
+
+        /* Alertas e Timeline */
         .alert-item, .timeline-item {
             font-size: 0.8rem;
             padding: 8px 0;
@@ -182,57 +220,10 @@
         .sev-low { background: rgba(56, 189, 248, 0.2); color: var(--sev-low); }
         .sev-med { background: rgba(250, 204, 21, 0.2); color: var(--sev-med); }
         .sev-high { background: rgba(251, 146, 60, 0.2); color: var(--sev-high); }
-        .sev-crit { background: rgba(244, 63, 94, 0.2); color: var(--sev-crit); animation: alertPulse 1.5s infinite; }
 
-        @keyframes alertPulse {
-            0% { background: rgba(244, 63, 94, 0.2); }
-            50% { background: rgba(244, 63, 94, 0.5); }
-            100% { background: rgba(244, 63, 94, 0.2); }
-        }
-
-        /* Orbital Monitor Visual */
-        .orbital-canvas-container {
-            position: relative;
-            height: 180px;
-            background: radial-gradient(circle, #091a2a 0%, #03070d 100%);
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            border: 1px solid rgba(0, 243, 255, 0.1);
-        }
-
-        .earth-core {
-            width: 60px;
-            height: 60px;
-            background: radial-gradient(circle, #38bdf8 0%, #0284c7 70%, #0369a1 100%);
-            border-radius: 50%;
-            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
-            position: relative;
-        }
-
-        .orbit-ring {
-            position: absolute;
-            border: 1px dashed rgba(0, 243, 255, 0.2);
-            border-radius: 50%;
-        }
-
-        .orbit-1 { width: 110px; height: 110px; }
-        .orbit-2 { width: 160px; height: 160px; }
-
-        .satellite-dot {
-            width: 6px;
-            height: 6px;
-            background: var(--primary-cyan);
-            border-radius: 50%;
-            position: absolute;
-            box-shadow: 0 0 6px var(--primary-cyan);
-        }
-
-        /* AI Briefing & Buttons */
+        /* AI Briefing */
         .ai-box {
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             line-height: 1.4;
             color: var(--text-main);
             background: rgba(0, 243, 255, 0.03);
@@ -252,21 +243,27 @@
             cursor: pointer;
             text-transform: uppercase;
             font-weight: bold;
-            transition: all 0.2s;
             width: 100%;
+            transition: all 0.2s;
         }
 
         .btn-soc:hover {
             background: var(--primary-cyan);
             color: var(--bg-deep);
-            box-shadow: 0 0 10px var(--accent-glow);
         }
 
-        /* Data Sources list */
+        /* Data Sources */
+        .sources-section {
+            margin-top: 24px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 14px;
+        }
+
         .sources-list {
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
+            margin-top: 6px;
         }
         
         .source-pill {
@@ -282,14 +279,11 @@
 <body>
 
     <header>
-        <div class="logo-area">
-            <h1>AstroGuard SOC</h1>
-            <p>Space Threat Intelligence & Operations</p>
-        </div>
-        <div id="live-clock" style="font-size: 0.8rem; color: var(--text-muted);">UTC 00:00:00</div>
+        <h1>AstroGuard SOC</h1>
+        <p>Space Threat Intelligence & Orbit Defense</p>
     </header>
 
-    <!-- Status Bar / Conexões -->
+    <!-- Indicadores de Conexão Individuais -->
     <div class="status-bar">
         <div class="badge-status"><span class="pulse-dot"></span> NASA API: ONLINE</div>
         <div class="badge-status"><span class="pulse-dot"></span> NOAA API: ONLINE</div>
@@ -297,7 +291,7 @@
         <div class="badge-status"><span class="pulse-dot"></span> AI Engine: ACTIVE</div>
     </div>
 
-    <!-- 1. KPIs Compactos -->
+    <!-- 1. KPIs Avançados -->
     <div class="kpi-container">
         <div class="kpi-box">
             <div class="kpi-label">Threat Level</div>
@@ -321,35 +315,32 @@
         </div>
     </div>
 
-    <!-- Grade Responsiva de Cards -->
+    <!-- Grid de Cards do SOC -->
     <div class="dashboard-grid">
 
-        <!-- 5. Orbital Monitor -->
-        <div class="card" style="grid-column: span auto;">
+        <!-- Orbital Monitor -->
+        <div class="card">
             <div class="card-title">Orbital Monitor (LEO Tracker)</div>
             <div class="orbital-canvas-container">
                 <div class="orbit-ring orbit-1"></div>
                 <div class="orbit-ring orbit-2"></div>
                 <div class="earth-core"></div>
-                <!-- Satélites simulados em órbita -->
-                <div class="satellite-dot" style="top: 40px; left: 80px;"></div>
-                <div class="satellite-dot" style="bottom: 50px; right: 70px;"></div>
-                <div class="satellite-dot" style="top: 100px; right: 50px;"></div>
+                <div class="satellite-dot" style="top: 35px; log: 70px; left: 70px;"></div>
+                <div class="satellite-dot" style="bottom: 40px; right: 50px;"></div>
             </div>
         </div>
 
-        <!-- 6. AI Briefing -->
+        <!-- AI Briefing -->
         <div class="card">
             <div class="card-title">AI Briefing & CTI Summary</div>
             <div class="ai-box">
-                <strong>Resumo Executivo:</strong> Atividade solar estável com leve aumento de prótons. Três alertas de conjunção LEO monitorados em órbitas críticas sem necessidade de manobra imediata.<br><br>
-                <strong>Nível de Risco:</strong> Moderado (Yellow)<br>
-                <strong>Recomendação:</strong> Manter vigilância nas telemetrias de painel solar das frotas em órbita baixa.
+                <strong>Resumo Executivo:</strong> Atividade solar estável com leve oscilação no fluxo de prótons. Três alertas de conjunção LEO monitorados em órbitas críticas.<br><br>
+                <strong>Recomendação:</strong> Manter vigilância nas telemetrias de painel solar.
             </div>
-            <button class="btn-soc" onclick="refreshBriefing()">Gerar novo briefing</button>
+            <button class="btn-soc" onclick="alert('Briefing atualizado com sucesso!')">Gerar novo briefing</button>
         </div>
 
-        <!-- 3. Alertas Recentes -->
+        <!-- Alertas Recentes -->
         <div class="card">
             <div class="card-title">Alertas Recentes</div>
             <div class="alert-item">
@@ -358,7 +349,6 @@
                     <span class="severity-badge sev-high">HIGH</span>
                 </div>
                 <div style="color: var(--text-muted); font-size: 0.75rem;">Aproximação a 1.2km de detrito espacial.</div>
-                <div style="font-size: 0.65rem; color: var(--primary-cyan);">15:42 UTC • Status: Analisando</div>
             </div>
             <div class="alert-item">
                 <div class="row-info">
@@ -366,11 +356,10 @@
                     <span class="severity-badge sev-med">MEDIUM</span>
                 </div>
                 <div style="color: var(--text-muted); font-size: 0.75rem;">Kp-index atingiu nível 4 nas últimas 3h.</div>
-                <div style="font-size: 0.65rem; color: var(--primary-cyan);">13:10 UTC • Status: Monitorando</div>
             </div>
         </div>
 
-        <!-- 4. Timeline Operacional -->
+        <!-- Timeline Operacional -->
         <div class="card">
             <div class="card-title">Timeline Operacional</div>
             <div class="timeline-item">
@@ -381,38 +370,34 @@
                 <span style="color: var(--primary-cyan); font-weight: bold;">14:00 UTC</span>
                 <span>Atualização de epemérides de satélites críticos concluída.</span>
             </div>
-            <div class="timeline-item">
-                <span style="color: var(--primary-cyan); font-weight: bold;">12:15 UTC</span>
-                <span>Varredura de telemetria e integridade de rede do SOC realizada.</span>
-            </div>
         </div>
 
-        <!-- 2. NEO Feed & Space Weather -->
+        <!-- NEO Feed & Space Weather -->
         <div class="card">
-            <div class="card-title">NEO Feed (Near Earth Objects)</div>
-            <div style="font-size: 0.8rem; margin-bottom: 8px;">
-                <strong>Asteróide 2026-XF:</strong> Passagem próxima prevista. Distância nominal segura (0.04 AU).
+            <div class="card-title">NEO Feed (NASA JPL)</div>
+            <div style="font-size: 0.8rem; margin-bottom: 6px;">
+                <strong>Asteróide 2026-XF:</strong> Passagem segura prevista (0.04 AU).
             </div>
             <div style="font-size: 0.75rem; color: var(--text-muted);">
-                Velocidade relativa: 24.5 km/s • Magnitude: 21.4 (Simulação / Atualizado)
+                Velocidade relativa: 24.5 km/s • Status: Monitorado
             </div>
         </div>
 
         <div class="card">
-            <div class="card-title">Space Weather (NOAA/SWPC)</div>
-            <div style="font-size: 0.8rem; margin-bottom: 8px;">
-                <strong>Fluxo de Raios X:</strong> Nível B8.4 (Normal a Moderado)
+            <div class="card-title">Space Weather (NOAA)</div>
+            <div style="font-size: 0.8rem; margin-bottom: 6px;">
+                <strong>Fluxo de Raios X:</strong> Nível B8.4 (Estável)
             </div>
             <div style="font-size: 0.75rem; color: var(--text-muted);">
-                Vento solar: 420 km/s • Campo Magnético Interplanetário (IMF): Estável.
+                Vento solar: 420 km/s • Kp Index: 2.3
             </div>
         </div>
 
     </div>
 
-    <!-- 7. Data Sources Area -->
-    <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 12px;">
-        <div style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">Fontes de Dados Integradas:</div>
+    <!-- Data Sources Area -->
+    <div class="sources-section">
+        <div style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Fontes de Dados Integradas:</div>
         <div class="sources-list">
             <span class="source-pill">NASA/JPL</span>
             <span class="source-pill">NOAA/SWPC</span>
@@ -421,24 +406,5 @@
         </div>
     </div>
 
-    <script>
-        // Relógio UTC dinâmico para dar aspecto de SOC real
-        function updateClock() {
-            const now = new Date();
-            const utcString = now.toUTCString().split(' ')[4] + ' UTC';
-            document.getElementById('live-clock').innerText = utcString;
-        }
-        setInterval(updateClock, 1000);
-        updateClock();
-
-        function refreshBriefing() {
-            const btn = document.querySelector('.btn-soc');
-            btn.innerText = "Atualizando CTI...";
-            setTimeout(() => {
-                btn.innerText = "Gerar novo briefing";
-                alert("Briefing de Inteligência atualizado com sucesso!");
-            }, 1000);
-        }
-    </script>
 </body>
 </html>
