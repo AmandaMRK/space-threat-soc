@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AstroGuard SOC Espacial</title>
+    <title>AstroGuard SOC Imersivo</title>
     <style>
         :root { 
             --bg: #030712; 
-            --card: rgba(13, 25, 45, 0.85); 
+            --card: rgba(13, 25, 45, 0.88); 
             --cyan: #00f3ff; 
             --text: #e2e8f0; 
-            --border: rgba(0, 243, 255, 0.2); 
+            --border: rgba(0, 243, 255, 0.25); 
         }
         
-        /* FUNDO DE UNIVERSO COM ESTRELAS */
+        /* FUNDO COM ESTRELAS, POEIRA ESTELAR E NEBULOSA */
         body { 
             background-color: var(--bg); 
             color: var(--text); 
@@ -21,19 +21,15 @@
             padding: 15px; 
             margin: 0; 
             background-image: 
-                radial-gradient(white 1px, transparent 0),
-                radial-gradient(rgba(0, 243, 255, 0.4) 1px, transparent 0),
-                radial-gradient(rgba(255, 255, 255, 0.2) 2px, transparent 0),
-                radial-gradient(circle at 50% 30%, #0c1b33 0%, #030712 70%);
-            background-size: 550px 550px, 350px 350px, 200px 200px, 100% 100%;
-            background-position: 0 0, 40px 60px, 130px 90px, 0 0;
+                radial-gradient(white 1.2px, transparent 0), 
+                radial-gradient(rgba(0, 243, 255, 0.6) 1.5px, transparent 0), 
+                radial-gradient(rgba(168, 85, 247, 0.4) 2px, transparent 0),
+                radial-gradient(circle at 30% 20%, rgba(14, 116, 144, 0.25) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(88, 28, 135, 0.2) 0%, transparent 50%),
+                linear-gradient(to bottom, #030712, #050b14);
+            background-size: 400px 400px, 250px 250px, 600px 600px, 100% 100%, 100% 100%, 100% 100%;
+            background-position: 0 0, 50px 70px, 150px 200px, 0 0, 0 0, 0 0;
             background-attachment: fixed;
-            animation: spaceGlow 20s ease infinite alternate;
-        }
-
-        @keyframes spaceGlow {
-            0% { background-position: 0 0, 40px 60px, 130px 90px, 0 0; }
-            100% { background-position: 200px 200px, 140px 160px, 230px 190px, 0 0; }
         }
 
         .header { 
@@ -41,9 +37,9 @@
             margin-bottom: 20px; 
             border-bottom: 1px solid var(--border); 
             padding-bottom: 15px; 
-            background: rgba(5, 11, 20, 0.5);
-            backdrop-filter: blur(8px);
-            border-radius: 10px;
+            background: rgba(5, 11, 20, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
         }
         .header h1 { 
             color: var(--cyan); 
@@ -51,7 +47,7 @@
             font-size: 1.5rem; 
             text-transform: uppercase; 
             letter-spacing: 2px; 
-            text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+            text-shadow: 0 0 12px rgba(0, 243, 255, 0.5);
         }
         .grid-kpi { 
             display: grid; 
@@ -66,6 +62,7 @@
             border-radius: 8px; 
             text-align: center; 
             backdrop-filter: blur(10px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
         }
         .dashboard-grid { 
             display: grid; 
@@ -116,19 +113,19 @@
             justify-content: center; 
             position: relative; 
             overflow: hidden;
-            border: 1px solid rgba(0, 243, 255, 0.1);
+            border: 1px solid rgba(0, 243, 255, 0.15);
         }
         .earth { 
             width: 45px; 
             height: 45px; 
-            background: radial-gradient(circle, #38bdf8 0%, #0284c7 70%, #0369a1 100%); 
+            background: radial-gradient(circle, #38bdf8, #0284c7); 
             border-radius: 50%; 
             box-shadow: 0 0 15px rgba(56, 189, 248, 0.6); 
             z-index: 2;
         }
         .orbit-path {
             position: absolute;
-            border: 1px dashed rgba(0, 243, 255, 0.25);
+            border: 1px dashed rgba(0, 243, 255, 0.3);
             border-radius: 50%;
         }
         .orbit-1 { width: 90px; height: 90px; }
@@ -176,7 +173,7 @@
         }
         .modal-close {
             background: var(--cyan);
-            color: var(--bg);
+            color: #030712;
             border: none;
             padding: 8px 15px;
             font-weight: bold;
@@ -203,11 +200,6 @@
             margin-top: 20px; 
             border: 2px solid #005a8d; 
             box-shadow: 0 4px 15px rgba(0, 136, 204, 0.4);
-            transition: all 0.2s;
-        }
-        .btn-telegram:hover {
-            background: #0099e6;
-            box-shadow: 0 0 20px rgba(0, 136, 204, 0.7);
         }
         pre { 
             background: #020617; 
