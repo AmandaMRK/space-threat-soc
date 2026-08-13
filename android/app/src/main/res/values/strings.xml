@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">AstroGuard</string>
+    <string name="title_activity_main">AstroGuard</string>
+    <string name="package_name">com.astroguard.soc</string>
+    <string name="custom_url_scheme">com.astroguard.soc</string>
+</resources>
