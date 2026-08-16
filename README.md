@@ -1,24 +1,15 @@
-## 📱 Versão Mobile (Aplicativo Android)
+## 📱 Arquitetura do Projeto e Interfaces
 
-Além do monitoramento via bot do Telegram e painel web, o **Space-Threat SOC** conta agora com um aplicativo nativo desenvolvido no **Android Studio** (integrado via Railway). O app serve como um centro de comando portátil para o analista acompanhar métricas de CTI e segurança em tempo real.
+O **Space-Threat SOC** é composto por um backend central (Railway), um bot interativo no Telegram e um aplicativo mobile nativo (Android Studio).
 
-### 🖼️ Visão Geral das Telas do Aplicativo:
+### 🖼️ Visão Geral dos Módulos:
 
-| 1. Tela Principal | 2. Detalhes Orbitais | 3. Integração |
-| :---: | :---: | :---: |
-| ![Tela Principal](assets/tela-principal.png) | ![Detalhes Orbitais](assets/detalhes-orbitais.png) | ![Integração](assets/integracao-telegram.png) |
+| 🤖 Módulo Central (Bot Telegram) | 📱 Interface Mobile (Tela Principal) |
+| :---: | :---: |
+| ![Bot Telegram](assets/preview.png) | ![Tela Principal Mobile](assets/tela-principal.jpeg) |
+| *Visão do Bot de SOC em Tier-3 com menus de operações (Dashboard, Incidentes, etc).* | *Painel de controle mobile exibindo Threat Level e resumo de CTI/AI.* |
 
-### 🔍 O que cada tela apresenta:
-
-* **Tela Principal (Dashboard & Status):** 
-  * Exibe o **Threat Level** atual (ex: *Moderate*), contagem de eventos nas últimas 24 horas e monitoramento de objetos LEO (Low Earth Orbit).
-  * Possui o **AI Briefing & CTI Summary**, que traz um resumo executivo gerado por inteligência artificial simulando uma análise de SOC Sênior.
-  * Contém a **Timeline Operacional** com alertas recentes de aproximação de detritos e atualizações de efemérides.
-
-* **Detalhes Orbitais & Monitoramento Técnico:**
-  * Lista o status online de feeds de inteligência de ameaças e dados espaciais (como *NEO Feed da NASA/JPL* e *Space Weather da NOAA*).
-  * Monitoramento de radiação orbital (Cinturão de Van Allen), tráfego em constelações LEO e segurança cibernética com criptografia C2 ativa (AES-256).
-  * Inclui um **Terminal ao Vivo** simulando logs de sistema (*SYSTEM ONLINE, NEO SYNC, FIREWALL SECURE*) para dar o toque real de um ambiente de operações de segurança.
-
-* **Integração Direta:**
-  * Botão de ação rápida **"Abrir Alertas no Telegram"**, permitindo que o operador salte imediatamente do aplicativo mobile para o chat interativo do bot de incidentes.
+| 📡 Detalhes Orbitais & Espaciais | 🔗 Atalho de Integração |
+| :---: | :---: |
+| ![Detalhes Orbitais](assets/detalhes-orbitais.jpeg) | ![Integração Telegram](assets/integracao-telegram.jpeg) |
+| *Monitoramento técnico (NOAA, NASA/JPL, Radiação, Cibersegurança).* | *Botão de ação rápida para abrir os alertas em tempo real no chat do Telegram.* |
