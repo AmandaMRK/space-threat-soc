@@ -4,9 +4,9 @@ Além do monitoramento via bot do Telegram e painel web, o **Space-Threat SOC** 
 
 ### 🖼️ Visão Geral das Telas do Aplicativo:
 
-| 1. Tela Principal (Visão Geral) | 2. Detalhes Orbitais & Espaciais | 3. Atalho / Integração com Telegram |
+| 1. Tela Principal | 2. Detalhes Orbitais | 3. Integração |
 | :---: | :---: | :---: |
-| ![Tela Principal](assets/Tela%20Principal%20(Visão%20...jpeg) | ![Detalhes Orbitais](assets/Detalhes%20Orbitais%20e%20Espa....jpeg) | ![Integração com Telegram](assets/Integração%20com%20Teleg....jpeg) |
+| ![Tela Principal](assets/tela-principal.png) | ![Detalhes Orbitais](assets/detalhes-orbitais.png) | ![Integração](assets/integracao-telegram.png) |
 
 ### 🔍 O que cada tela apresenta:
 
